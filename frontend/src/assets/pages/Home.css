@@ -111,11 +111,11 @@ body::before {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 120px 60px 80px;
+  padding: 100px 60px 80px;
   overflow: hidden;
 }
 
-/* hero image */
+/* hero background image */
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -159,22 +159,23 @@ body::before {
   z-index: 1;
 }
 
-/* ── Hero content: vertical stack ── */
-.hero-content {
+/* ── Two-column hero inner wrapper ── */
+.hero-inner {
   position: relative;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 48px;           /* space between text block and card */
-  max-width: 600px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
 }
 
-/* ── Text block (title → subtitle → desc → buttons) ── */
-.hero-text-block {
+/* ── Left column: text centered ── */
+.hero-text-col {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
 }
 
 .hero-title {
@@ -216,12 +217,14 @@ body::before {
   line-height: 1.65;
   font-weight: 300;
   margin-bottom: 32px;
+  max-width: 420px;
   animation: fadeUp 0.7s 0.25s ease both;
 }
 
 .hero-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 18px;
   flex-wrap: wrap;
   animation: fadeUp 0.7s 0.3s ease both;
@@ -271,98 +274,71 @@ body::before {
   background: rgba(255,255,255,0.04);
 }
 
-/* ── Skeleton card — now in normal flow, BELOW buttons ── */
-.hero-card {
+/* ══════════════════════════════════════════════════════════════
+   ── RIGHT COLUMN: LARGE FEATURE IMAGE
+   ══════════════════════════════════════════════════════════════ */
+
+.hero-image-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeUp 0.9s 0.45s ease both;
+}
+
+/* Outer wrapper — controls size, border, glow */
+.hero-image-wrapper {
+  position: relative;
   width: 100%;
-  max-width: 420px;
-  background: var(--surface);
+  max-width: 580px;
+  border-radius: 20px;
+  overflow: visible; /* let corners & badge bleed out */
+}
+
+/* The actual image */
+.hero-feature-img {
+  display: block;
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 20px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.45), var(--glow);
-  animation: fadeUp 0.8s 0.45s ease both;
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(0, 229, 255, 0.08),
+    0 0 60px rgba(0, 229, 255, 0.10);
+  /* Subtle cyan tint overlay via CSS filter */
+  filter: brightness(0.92) saturate(1.1);
+  transition: filter 0.4s;
+}
+.hero-image-wrapper:hover .hero-feature-img {
+  filter: brightness(1) saturate(1.2);
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
-}
-.card-title {
-  font-family: var(--font-head);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-.card-live {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.68rem;
-  color: var(--green);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.live-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: pulse 1.2s ease-in-out infinite;
+/* Gradient fade at the bottom of the image into page bg */
+.hero-image-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(to top, rgba(6,8,16,0.72) 0%, transparent 100%);
+  border-radius: 0 0 20px 20px;
+  pointer-events: none;
 }
 
-/* skeleton preview area — horizontal layout: SVG left, checklist right */
-.card-body {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
+/* ── Corner accent marks ── */
+.img-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  z-index: 4;
+  pointer-events: none;
 }
+.img-corner--tl { top: -1px;  left: -1px;  border-top: 2px solid var(--accent); border-left: 2px solid var(--accent);  border-radius: 4px 0 0 0; }
+.img-corner--tr { top: -1px;  right: -1px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); border-radius: 0 4px 0 0; }
+.img-corner--bl { bottom: -1px; left: -1px;  border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent);  border-radius: 0 0 0 4px; }
+.img-corner--br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); border-radius: 0 0 4px 0; }
 
-.card-skeleton {
-  flex-shrink: 0;
-  width: 120px;
-  height: 140px;
-  background: var(--surface2);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.card-skeleton-svg {
-  width: 64px;
-  opacity: 0.9;
-}
-
-.checklist {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 4px;
-}
-.check-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-.check-icon {
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  flex-shrink: 0;
-}
-.check-done   { background: rgba(0,230,118,0.15); color: var(--green);  border: 1px solid rgba(0,230,118,0.3); }
-.check-active { background: rgba(0,229,255,0.12); color: var(--accent); border: 1px solid rgba(0,229,255,0.3); }
-.check-pending{ background: var(--surface2);      color: var(--text-muted); border: 1px solid var(--border); }
-.check-done-text   { color: var(--text); }
-.check-active-text { color: var(--accent); }
 
 /* ─── Shared section labels ──────────────────────────────────── */
 .section-label {
@@ -570,19 +546,22 @@ body::before {
   .disciplines-grid { grid-template-columns: repeat(3, 1fr); }
   .steps-row { grid-template-columns: repeat(2, 1fr); gap: 32px; }
   .steps-row::after { display: none; }
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero-text-col { align-items: center; text-align: center; }
+  .hero-image-wrapper { max-width: 100%; }
+  .hero-feature-img { height: 380px; }
 }
 @media (max-width: 768px) {
   .nav { padding: 16px 24px; }
   .nav-links { display: none; }
   .hero { padding: 120px 24px 60px; }
-  .hero-content { max-width: 100%; }
-  .hero-card { max-width: 100%; }
-  .card-body { flex-direction: column; }
-  .card-skeleton { width: 100%; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-feature-img { height: 280px; }
   .features-section, .how-section,
   .disciplines-section { padding: 70px 24px; }
   .features-grid { grid-template-columns: 1fr; }
   .steps-row { grid-template-columns: 1fr; }
   .disciplines-grid { grid-template-columns: repeat(2, 1fr); }
   .footer { flex-direction: column; gap: 20px; padding: 32px 24px; text-align: center; }
+  .hero-img-stats { flex-wrap: wrap; gap: 12px; }
 }
