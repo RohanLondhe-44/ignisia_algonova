@@ -9,4 +9,4 @@ MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["ignisia"]
 
-print("✅ Connected to MongoDB")
+print("Connected to MongoDB")

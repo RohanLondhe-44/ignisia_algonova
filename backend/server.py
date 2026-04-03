@@ -3,7 +3,8 @@ from flask_cors import CORS
 
 from trackers.cpr_tracker import generate_frames, DEFAULT_CONFIG
 import trackers.cpr_tracker as tracker
-
+import os
+from dotenv import load_dotenv
 # GROQ SETUP
 from groq import Groq
 import threading
@@ -13,7 +14,8 @@ app = Flask(__name__)
 CORS(app)
 
 # -------------------- GROQ SETUP --------------------
-client = Groq()
+load_dotenv()
+client = Groq(api_key=os.getenv("API_KEY"))
 
 def groq_feedback_loop():
     while True:
