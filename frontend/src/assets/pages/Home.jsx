@@ -1,9 +1,11 @@
 import React from 'react';
 import './Home.css';
+import HandImage from '../Hand.png';
 
-// ── Replace this import with your hero image ──────────────────
-// import HeroImage from './assets/hero.jpg';
+// ── Replace this with your actual image path ──────────────────
 const HERO_IMAGE = '/assets/hero.jpg';
+// ── This is the large right-side feature image ────────────────
+const FEATURE_IMAGE = HandImage;
 
 const features = [
   {
@@ -68,49 +70,9 @@ const disciplines = [
   { emoji: '💉', name: 'Surgical' },
 ];
 
-const SkeletonPreview = () => (
-  <svg className="card-skeleton-svg" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="40" cy="90" r="5" fill="#00e5ff" opacity="0.9"/>
-    <line x1="35" y1="88" x2="18" y2="72" stroke="#00e5ff" strokeWidth="1.5" opacity="0.6"/>
-    <circle cx="18" cy="72" r="3" fill="#00e5ff" opacity="0.8"/>
-    <line x1="18" y1="72" x2="10" y2="60" stroke="#00e5ff" strokeWidth="1.5" opacity="0.5"/>
-    <circle cx="10" cy="60" r="2.5" fill="#7b5ea7" opacity="0.9"/>
-    <line x1="38" y1="85" x2="34" y2="60" stroke="#00e5ff" strokeWidth="1.5" opacity="0.6"/>
-    <circle cx="34" cy="60" r="3" fill="#00e5ff" opacity="0.8"/>
-    <line x1="34" y1="60" x2="32" y2="42" stroke="#00e5ff" strokeWidth="1.5" opacity="0.5"/>
-    <circle cx="32" cy="42" r="2.5" fill="#00e5ff" opacity="0.9"/>
-    <line x1="32" y1="42" x2="31" y2="28" stroke="#00e5ff" strokeWidth="1.5" opacity="0.4"/>
-    <circle cx="31" cy="28" r="2" fill="#00e676" opacity="1"/>
-    <line x1="40" y1="85" x2="40" y2="58" stroke="#00e5ff" strokeWidth="1.5" opacity="0.6"/>
-    <circle cx="40" cy="58" r="3" fill="#00e5ff" opacity="0.8"/>
-    <line x1="40" y1="58" x2="40" y2="38" stroke="#00e5ff" strokeWidth="1.5" opacity="0.5"/>
-    <circle cx="40" cy="38" r="2.5" fill="#00e5ff" opacity="0.9"/>
-    <line x1="40" y1="38" x2="40" y2="22" stroke="#00e5ff" strokeWidth="1.5" opacity="0.4"/>
-    <circle cx="40" cy="22" r="2" fill="#00e676" opacity="1"/>
-    <line x1="43" y1="85" x2="46" y2="60" stroke="#00e5ff" strokeWidth="1.5" opacity="0.6"/>
-    <circle cx="46" cy="60" r="3" fill="#00e5ff" opacity="0.8"/>
-    <line x1="46" y1="60" x2="48" y2="42" stroke="#00e5ff" strokeWidth="1.5" opacity="0.5"/>
-    <circle cx="48" cy="42" r="2.5" fill="#00e5ff" opacity="0.9"/>
-    <line x1="48" y1="42" x2="49" y2="28" stroke="#00e5ff" strokeWidth="1.5" opacity="0.4"/>
-    <circle cx="49" cy="28" r="2" fill="#00e676" opacity="1"/>
-    <line x1="44" y1="87" x2="56" y2="65" stroke="#00e5ff" strokeWidth="1.5" opacity="0.6"/>
-    <circle cx="56" cy="65" r="3" fill="#00e5ff" opacity="0.8"/>
-    <line x1="56" y1="65" x2="60" y2="50" stroke="#00e5ff" strokeWidth="1.5" opacity="0.5"/>
-    <circle cx="60" cy="50" r="2.5" fill="#7b5ea7" opacity="0.9"/>
-    <line x1="60" y1="50" x2="62" y2="38" stroke="#00e5ff" strokeWidth="1.5" opacity="0.4"/>
-    <circle cx="62" cy="38" r="2" fill="#00e676" opacity="1"/>
-    <line x1="40" y1="90" x2="40" y2="108" stroke="#00e5ff" strokeWidth="1.5" opacity="0.4"/>
-    <circle cx="34" cy="108" r="3" fill="#00e5ff" opacity="0.5"/>
-    <circle cx="46" cy="108" r="3" fill="#00e5ff" opacity="0.5"/>
-    <line x1="34" y1="108" x2="46" y2="108" stroke="#00e5ff" strokeWidth="1.5" opacity="0.3"/>
-  </svg>
-);
-
 export const Home = () => {
   return (
     <>
-    
-
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="hero">
         <div className="hero-bg">
@@ -119,10 +81,11 @@ export const Home = () => {
         <div className="hero-glow" />
         <div className="hero-glow2" />
 
-        <div className="hero-content">
+        {/* Two-column grid */}
+        <div className="hero-inner">
 
-          {/* ── TOP: Title + subtitle + buttons ── */}
-          <div className="hero-text-block">
+          {/* ── LEFT: centered text ── */}
+          <div className="hero-text-col">
             <h1 className="hero-title">
               Precision<em>LABS</em>
             </h1>
@@ -139,32 +102,22 @@ export const Home = () => {
             </div>
           </div>
 
-          {/* ── BOTTOM: Skeleton overlay card ── */}
-          <div className="hero-card">
-            <div className="card-header">
-              <span className="card-title">Skeleton Overlay</span>
-              <span className="card-live"><span className="live-dot" />Live</span>
-            </div>
-            <div className="card-skeleton">
-              <SkeletonPreview />
-            </div>
-            <div className="checklist">
-              <div className="check-item">
-                <span className="check-icon check-done">✓</span>
-                <span className="check-done-text">Grip angle — correct</span>
-              </div>
-              <div className="check-item">
-                <span className="check-icon check-done">✓</span>
-                <span className="check-done-text">Zone A → Zone B transition</span>
-              </div>
-              <div className="check-item">
-                <span className="check-icon check-active">→</span>
-                <span className="check-active-text">Dwell at checkpoint 3…</span>
-              </div>
-              <div className="check-item">
-                <span className="check-icon check-pending">○</span>
-                <span>Final release sequence</span>
-              </div>
+          {/* ── RIGHT: large feature image ── */}
+          <div className="hero-image-col">
+            <div className="hero-image-wrapper">
+              {/* Decorative corner accents */}
+              <span className="img-corner img-corner--tl" />
+              <span className="img-corner img-corner--tr" />
+              <span className="img-corner img-corner--bl" />
+              <span className="img-corner img-corner--br" />
+
+
+              <img
+                src={FEATURE_IMAGE}
+                alt="Hand tracking in action"
+                className="hero-feature-img"
+              />
+
             </div>
           </div>
 
@@ -223,9 +176,6 @@ export const Home = () => {
           ))}
         </div>
       </section>
-
-      {/* ── FOOTER ───────────────────────────────────────────── */}
-      
     </>
   );
 };
