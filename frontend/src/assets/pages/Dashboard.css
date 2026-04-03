@@ -40,11 +40,10 @@
 /* ─── HEADER ─────────────────────────────────────────────────── */
 .dash-header {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding-bottom: 28px;
-  border-bottom: 1px solid var(--border);
-  animation: fadeUp 0.45s ease both;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 6px;
 }
 .dash-header-label {
   font-family: var(--font-head);
@@ -194,26 +193,15 @@
   border-color: rgba(0,229,255,0.3);
 }
 
-.proc-diff {
-  font-family: var(--font-head);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 4px 9px;
-  border-radius: 4px;
-}
-.diff-green { color: var(--green); background: rgba(0,230,118,0.12); border: 1px solid rgba(0,230,118,0.25); }
-.diff-amber { color: #ffc107;      background: rgba(255,193,7,0.1);  border: 1px solid rgba(255,193,7,0.25); }
-.diff-red   { color: #ff5252;      background: rgba(255,82,82,0.1);  border: 1px solid rgba(255,82,82,0.25); }
-
 .proc-title {
   font-family: var(--font-head);
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   margin-bottom: 3px;
+  color: var(--text);
 }
+
 .proc-subtitle {
   font-size: 0.7rem;
   color: var(--accent);
