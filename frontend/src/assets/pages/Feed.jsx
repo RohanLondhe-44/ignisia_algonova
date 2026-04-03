@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
-import "./CameraFeed.css";
+import "./Feed.css";
 
 const videoConstraints = {
   width: 640,
@@ -93,4 +93,4 @@ const Feed = () => {
   );
 };
 
-export default Feed;
+export default Feed ;
