@@ -176,230 +176,6 @@ class CPRState:
     cpm_ok:           Optional[bool] = None
 
 
-def main(config: dict):
-    mp_pose = mp.solutions.pose
-    pose    = mp_pose.Pose(
-        static_image_mode=False,
-        model_complexity=1,
-        smooth_landmarks=True,
-        min_detection_confidence=0.6,
-        min_tracking_confidence=0.6
-    )
-
-    cap = cv2.VideoCapture(config["camera_index"])
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-
-    state  = CPRState()
-    prev_t = time.time()
-
-    
-    SIDE_W = 300
-
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        frame = cv2.flip(frame, 1)
-        h, w  = frame.shape[:2]
-        rgb   = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        res   = pose.process(rgb)
-
-        
-        sidebar = np.full((h, SIDE_W, 3), C_BG, dtype=np.uint8)
-
-        if res.pose_landmarks:
-            lms = res.pose_landmarks.landmark
-            ghost = generate_ghost(lms)
-            draw_ghost(frame, ghost, w, h, state)
-            # Landmark indices 
-            # 11 = L_shoulder 12 = R_shoulder
-            # 13 = L_elbow    14 = R_elbow
-            # 15 = L_wrist    16 = R_wrist
-            # 23 = L_hip      24 = R_hip
-
-            vis_thresh = 0.5
-
-            def visible(idx): return lms[idx].visibility > vis_thresh
-
-            L_vis = visible(15) and visible(13) and visible(11)
-            R_vis = visible(16) and visible(14) and visible(12)
-            state.both_hands_ok = L_vis and R_vis
-
-            
-            if L_vis and R_vis:
-                lw_x, lw_y = norm_lm(lms, 15)
-                rw_x, rw_y = norm_lm(lms, 16)
-                mid_x = (lw_x + rw_x) / 2
-                mid_y = (lw_y + rw_y) / 2
-            elif L_vis:
-                mid_x, mid_y = norm_lm(lms, 15)
-            elif R_vis:
-                mid_x, mid_y = norm_lm(lms, 16)
-            else:
-                mid_x, mid_y = 0.5, 0.45
-
-      
-            state.wrist_y_history.append(mid_y)
-
-            if len(state.wrist_y_history) > 5:
-                smooth_y = np.mean(list(state.wrist_y_history)[-5:])
-
-              
-                if not state.in_compress:
-                    if smooth_y > state.peak_y + config["min_depth_thresh"]:
-                        state.in_compress = True
-                        state.trough_y    = smooth_y
-                else:
-                    if smooth_y > state.trough_y:
-                        state.trough_y = smooth_y
-                    if smooth_y < state.trough_y - config["min_depth_thresh"] * 0.5:
-                       
-                        depth = state.trough_y - state.peak_y
-                        state.depth_norm = depth
-                        if not hasattr(state, "last_comp_time"):
-                            state.last_comp_time = 0
-
-                        if time.time() - state.last_comp_time > 0.3:  
-                            state.compress_times.append(time.time())
-                            state.last_comp_time = time.time()
-                        state.in_compress = False
-                        state.peak_y      = smooth_y
-
-                if not state.in_compress:
-                    state.peak_y = min(state.peak_y, smooth_y) if state.wrist_y_history else smooth_y
-
-           
-            d = state.depth_norm
-            if d < config["min_depth_thresh"]:
-                state.depth_ok = False   
-            elif d > config["max_depth_thresh"]:
-                state.depth_ok = False
-            else:
-                state.depth_ok = True
-
-           ## CPM (buggy as of now)
-            now = time.time()
-            
-            while state.compress_times and now - state.compress_times[0] > 10:
-                state.compress_times.popleft()
-            if len(state.compress_times) >= 2:
-                span = state.compress_times[-1] - state.compress_times[0]
-                if span > 0:
-                    state.cpm = (len(state.compress_times)-1) / span * 60
-            state.cpm_ok = config["cpm_low"] <= state.cpm <= config["cpm_high"]
-
-            
-            elbow_ok_L = elbow_ok_R = None
-            if L_vis:
-                sh = norm_lm(lms, 11)
-                el = norm_lm(lms, 13)
-                wr = norm_lm(lms, 15)
-                ang = angle_between(sh, el, wr)
-                elbow_ok_L = ang >= config["elbow_angle_thresh"]
-            if R_vis:
-                sh = norm_lm(lms, 12)
-                el = norm_lm(lms, 14)
-                wr = norm_lm(lms, 16)
-                ang = angle_between(sh, el, wr)
-                elbow_ok_R = ang >= config["elbow_angle_thresh"]
-
-            if elbow_ok_L is not None and elbow_ok_R is not None:
-                state.elbow_ok = elbow_ok_L and elbow_ok_R
-            elif elbow_ok_L is not None:
-                state.elbow_ok = elbow_ok_L
-            elif elbow_ok_R is not None:
-                state.elbow_ok = elbow_ok_R
-
-            # skeleton on playback
-            mp.solutions.drawing_utils.draw_landmarks(
-                frame,
-                res.pose_landmarks,
-                mp_pose.POSE_CONNECTIONS,
-                mp.solutions.drawing_utils.DrawingSpec(color=(40,60,80),  thickness=2, circle_radius=2),
-                mp.solutions.drawing_utils.DrawingSpec(color=(80,140,200),thickness=2, circle_radius=2),
-            )
-
-            
-            for idx, vis in [(15, L_vis), (16, R_vis)]:
-                if vis:
-                    pt, _ = lm(lms, idx, w, h)
-                    cv2.circle(frame, pt, 10, C_CYAN, 2)
-
-        
-        cv2.putText(sidebar, "CPR MONITOR", (12, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, C_CYAN, 2, cv2.LINE_AA)
-        cv2.line(sidebar, (12, 40), (SIDE_W-12, 40), (30,40,50), 1)
-
-        metrics = [
-            ("CPM",         f"{state.cpm:.0f}",    "bpm", state.cpm_ok),
-            ("DEPTH",       f"{state.depth_norm*100:.1f}", "cm~", state.depth_ok),
-            ("ELBOW LOCK",  "LOCKED" if state.elbow_ok else "BENT", "", state.elbow_ok),
-            ("BOTH HANDS",  "YES" if state.both_hands_ok else "NO",  "", state.both_hands_ok),
-        ]
-
-        y0 = 60
-        for label, val, unit, ok in metrics:
-            col = status_color(ok)
-            put_metric(sidebar, label, val, unit, col, 12, y0, ok)
-            cv2.line(sidebar, (12, y0+46), (SIDE_W-12, y0+46), (20,28,38), 1)
-            y0 += 58
-
-        
-        all_ok = all(
-            v is not None and v
-            for v in [state.cpm_ok, state.depth_ok,
-          state.elbow_ok, state.both_hands_ok]
-        )
-        bar_col = C_GREEN if all_ok else C_RED
-        bar_txt = "GOOD CPR" if all_ok else "CHECK FORM"
-        cv2.rectangle(sidebar, (12, h-56), (SIDE_W-12, h-12), bar_col, -1)
-        tw = cv2.getTextSize(bar_txt, cv2.FONT_HERSHEY_SIMPLEX, 0.65, 2)[0][0]
-        cv2.putText(sidebar, bar_txt,
-                    ((SIDE_W - tw)//2, h-26),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.65,
-                    C_BG, 2, cv2.LINE_AA)
-
-        # calc fps
-        now  = time.time()
-        fps  = 1.0 / (now - prev_t + 1e-9)
-        prev_t = now
-        cv2.putText(sidebar, f"{fps:.0f} fps", (12, h-68),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.32, C_DIM, 1, cv2.LINE_AA)
-
-        
-        combined = np.hstack([frame, sidebar])
-        cv2.imshow("CPR Tracker  |  q to quit", combined)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
-    pose.close()
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="CPR Tracker")
-    parser.add_argument("--config", type=str, default=None,
-                        help="Path to JSON config file")
-    args = parser.parse_args()
-
-    cfg = DEFAULT_CONFIG.copy()
-    if args.config:
-        with open(args.config) as f:
-            overrides = json.load(f)
-        cfg.update(overrides)
-
-
-    print(json.dumps(cfg, indent=4))
-    
-    print("  Press Q in the video window to quit.")
- 
-    main(cfg)
-
-
 def generate_frames(config):
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose(
@@ -444,17 +220,36 @@ def generate_frames(config):
             R_vis = visible(16) and visible(14) and visible(12)
             state.both_hands_ok = L_vis and R_vis
 
+            # Infer wrists even if partially occluded
+# -----------------------
+            def infer_joint(lms, idx_visible, idx_ref_a, idx_ref_b):
+                """Infer joint if not visible using shoulder/elbow reference."""
+                vis_thresh = 0.5
+                p = lms[idx_visible]
+                if p.visibility > vis_thresh:
+                    return norm_lm(lms, idx_visible)
+                # fallback: approximate from shoulder/elbow midline
+                a = norm_lm(lms, idx_ref_a)
+                b = norm_lm(lms, idx_ref_b)
+                return ((a[0]+b[0])/2, (a[1]+b[1])/2 + 0.3)  # offset down
+
+            # Get left and right wrist positions (visible or inferred)
+            lw_x, lw_y = infer_joint(lms, 15, 11, 13)  # L_wrist
+            rw_x, rw_y = infer_joint(lms, 16, 12, 14)  # R_wrist
+
+            # Determine if hands are actually visible
+            L_vis = lms[15].visibility > 0.5
+            R_vis = lms[16].visibility > 0.5
+
+            # ✅ Only count both_hands_ok if both wrists are visible
             if L_vis and R_vis:
-                lw_x, lw_y = norm_lm(lms, 15)
-                rw_x, rw_y = norm_lm(lms, 16)
-                mid_x = (lw_x + rw_x) / 2
-                mid_y = (lw_y + rw_y) / 2
-            elif L_vis:
-                mid_x, mid_y = norm_lm(lms, 15)
-            elif R_vis:
-                mid_x, mid_y = norm_lm(lms, 16)
+                state.both_hands_ok = True
             else:
-                mid_x, mid_y = 0.5, 0.45
+                state.both_hands_ok = None  # ignored in "all_ok" calculations
+
+            # Midpoint for compression calculations
+            mid_x = (lw_x + rw_x) / 2
+            mid_y = (lw_y + rw_y) / 2
 
             state.wrist_y_history.append(mid_y)
 
@@ -533,7 +328,7 @@ def generate_frames(config):
             ("CPM", f"{state.cpm:.0f}", "bpm", state.cpm_ok),
             ("DEPTH", f"{state.depth_norm*100:.1f}", "cm~", state.depth_ok),
             ("ELBOW LOCK", "LOCKED" if state.elbow_ok else "BENT", "", state.elbow_ok),
-            ("BOTH HANDS", "YES" if state.both_hands_ok else "NO", "", state.both_hands_ok),
+            ("BOTH HANDS", "YES" if state.both_hands_ok else ("NO" if state.both_hands_ok==False else "-"), "", state.both_hands_ok),
         ]
 
         y0 = 60
@@ -544,8 +339,8 @@ def generate_frames(config):
             y0 += 58
 
         all_ok = all(v is not None and v for v in [
-            state.cpm_ok, state.depth_ok, state.elbow_ok, state.both_hands_ok
-        ])
+    state.cpm_ok, state.depth_ok, state.elbow_ok, state.both_hands_ok
+])
 
         bar_col = C_GREEN if all_ok else C_RED
         bar_txt = "GOOD CPR" if all_ok else "CHECK FORM"
