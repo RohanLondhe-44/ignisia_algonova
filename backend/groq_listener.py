@@ -7,6 +7,7 @@ client = Groq()
 
 LOG_FILE = "cpr_log.json"
 
+# Helper function to read latest metrics from log file
 def get_latest_metrics():
     try:
         with open(LOG_FILE, "r") as f:

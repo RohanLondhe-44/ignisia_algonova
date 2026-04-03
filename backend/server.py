@@ -4,6 +4,7 @@ from flask_cors import CORS
 from trackers.cpr_tracker import generate_frames, DEFAULT_CONFIG
 import trackers.cpr_tracker as tracker
 
+# GROQ SETUP
 from groq import Groq
 import threading
 import time
