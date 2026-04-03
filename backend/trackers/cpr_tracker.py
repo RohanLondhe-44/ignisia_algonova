@@ -9,6 +9,7 @@ import collections
 from dataclasses import dataclass, field
 from typing import Optional
 
+LATEST_METRICS = {}
 #default values
 DEFAULT_CONFIG = {
     "camera_index":       0,
@@ -516,6 +517,20 @@ def generate_frames(config):
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-
+        global LATEST_METRICS
+        LATEST_METRICS = generate_metrics(state)
+    
+        
+     
+def generate_metrics(state):
+    return {
+        "cpm": round(state.cpm, 2),
+        "depth": round(state.depth_norm * 100, 2),
+        "depth_ok": state.depth_ok,
+        "center_ok": state.center_ok,
+        "elbow_ok": state.elbow_ok,
+        "hands_ok": state.both_hands_ok,
+        "cpm_ok": state.cpm_ok
+    }
     cap.release()
     pose.close()

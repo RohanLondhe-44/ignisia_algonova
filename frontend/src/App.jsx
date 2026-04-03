@@ -7,6 +7,7 @@ import { Home } from './assets/pages/Home'
 import './App.css'
 import { Footer } from './assets/components/Footer'
 import { Header } from './assets/components/Header'
+import  Report  from './assets/pages/Report';
 const App = () => {
   return(
       <BrowserRouter>
@@ -15,6 +16,7 @@ const App = () => {
           <Route path='/' element={<Home/>}/>
           <Route path='/feed' element={<Feed/>}/>
           <Route path='/dashboard' element={<Dashboard/>}/>
+          <Route path='/report' element={<Report/>}/>
         </Routes>
         <Footer/>
       </BrowserRouter>
