@@ -9,6 +9,29 @@ import collections
 from dataclasses import dataclass, field
 from typing import Optional
 
+class CPRLogger:
+    def __init__(self, filename="cpr_log.json"):
+        self.filename = filename
+        self.data = []
+
+    def log(self, state):
+        entry = {
+            "timestamp": time.time(),
+            "cpm": state.cpm,
+            "cpm_ok": state.cpm_ok,
+            "depth": state.depth_norm,
+            "depth_ok": state.depth_ok,
+            "center_ok": state.center_ok,
+            "elbow_ok": state.elbow_ok,
+            "both_hands_ok": state.both_hands_ok
+        }
+        self.data.append(entry)
+
+    def save(self):
+        with open(self.filename, "w") as f:
+            json.dump(self.data, f, indent=4)
+
+
 LATEST_METRICS = {}
 #default values
 DEFAULT_CONFIG = {
@@ -347,7 +370,10 @@ def generate_frames(config):
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     state = CPRState()
+    logger = CPRLogger()
+    last_log_time = time.time()
     prev_t = time.time()
+    
     SIDE_W = 300
 
     while cap.isOpened():
@@ -517,8 +543,16 @@ def generate_frames(config):
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+        current_time = time.time()
+        if current_time - last_log_time >= 1.0:
+            logger.log(state)
+            logger.save()   # ✅ save every 1 sec
+            last_log_time = current_time
         global LATEST_METRICS
         LATEST_METRICS = generate_metrics(state)
+        cap.release()
+        pose.close()
+        logger.save()
     
         
      
@@ -532,5 +566,3 @@ def generate_metrics(state):
         "hands_ok": state.both_hands_ok,
         "cpm_ok": state.cpm_ok
     }
-    cap.release()
-    pose.close()

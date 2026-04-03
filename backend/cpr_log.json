@@ -1,0 +1,242 @@
+[
+    {
+        "timestamp": 1775233989.5151155,
+        "cpm": 0.0,
+        "cpm_ok": false,
+        "depth": 0.0,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": true,
+        "both_hands_ok": false
+    },
+    {
+        "timestamp": 1775233990.6010325,
+        "cpm": 0.0,
+        "cpm_ok": false,
+        "depth": 1.0360271692276002,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775233991.70144,
+        "cpm": 0.0,
+        "cpm_ok": false,
+        "depth": 1.0360271692276002,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775233992.7757676,
+        "cpm": 0.0,
+        "cpm_ok": false,
+        "depth": 1.0360271692276002,
+        "depth_ok": false,
+        "center_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": false
+    },
+    {
+        "timestamp": 1775233993.7901642,
+        "cpm": 0.0,
+        "cpm_ok": false,
+        "depth": 1.0360271692276002,
+        "depth_ok": false,
+        "center_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": false
+    },
+    {
+        "timestamp": 1775233994.842535,
+        "cpm": 0.0,
+        "cpm_ok": false,
+        "depth": 1.0360271692276002,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775233995.859021,
+        "cpm": 0.0,
+        "cpm_ok": false,
+        "depth": 1.0360271692276002,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775233996.8710308,
+        "cpm": 0.0,
+        "cpm_ok": false,
+        "depth": 1.0360271692276002,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775233997.9515154,
+        "cpm": 7.916207275349231,
+        "cpm_ok": false,
+        "depth": 0.3511015594005584,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775233999.0187173,
+        "cpm": 7.916207275349231,
+        "cpm_ok": false,
+        "depth": 0.3511015594005584,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234000.035358,
+        "cpm": 7.916207275349231,
+        "cpm_ok": false,
+        "depth": 0.3511015594005584,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234001.1013134,
+        "cpm": 7.916207275349231,
+        "cpm_ok": false,
+        "depth": 0.3511015594005584,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234002.1991687,
+        "cpm": 14.215661785315682,
+        "cpm_ok": false,
+        "depth": 0.4591074168682098,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": false
+    },
+    {
+        "timestamp": 1775234003.2289326,
+        "cpm": 14.215661785315682,
+        "cpm_ok": false,
+        "depth": 0.4591074168682098,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234004.2855399,
+        "cpm": 27.48654706912057,
+        "cpm_ok": false,
+        "depth": 0.0955543965101242,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234005.3029625,
+        "cpm": 33.35917629326534,
+        "cpm_ok": false,
+        "depth": 0.11149807274341583,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234006.3403933,
+        "cpm": 36.53266655258415,
+        "cpm_ok": false,
+        "depth": 0.055155909061431974,
+        "depth_ok": true,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234007.408074,
+        "cpm": 38.843600164959625,
+        "cpm_ok": false,
+        "depth": 0.07465949356555934,
+        "depth_ok": true,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234008.4969459,
+        "cpm": 58.62848093023451,
+        "cpm_ok": false,
+        "depth": 0.17654460668563843,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234009.5333648,
+        "cpm": 66.39697773702949,
+        "cpm_ok": false,
+        "depth": 0.08774821758270257,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775234010.6332028,
+        "cpm": 66.60219005919765,
+        "cpm_ok": false,
+        "depth": 0.10356265902519224,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": false
+    },
+    {
+        "timestamp": 1775234011.6906803,
+        "cpm": 66.60219005919765,
+        "cpm_ok": false,
+        "depth": 0.10356265902519224,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": false
+    },
+    {
+        "timestamp": 1775234012.7008605,
+        "cpm": 75.39615558857203,
+        "cpm_ok": false,
+        "depth": 0.10356265902519224,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": false
+    },
+    {
+        "timestamp": 1775234013.7614045,
+        "cpm": 72.6658649091526,
+        "cpm_ok": false,
+        "depth": 0.10356265902519224,
+        "depth_ok": false,
+        "center_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": false
+    }
+]
