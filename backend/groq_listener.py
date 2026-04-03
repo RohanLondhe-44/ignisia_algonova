@@ -2,8 +2,10 @@ import time
 import json
 from groq import Groq
 import trackers.cpr_tracker as tracker
-
-client = Groq()
+import os
+from dotenv import load_dotenv
+load_dotenv()
+client = Groq(api_key=os.getenv("API_KEY"))
 
 LOG_FILE = "cpr_log.json"
 
