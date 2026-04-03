@@ -1,95 +1,136 @@
-import React, { useRef, useCallback, useState } from "react";
-import Webcam from "react-webcam";
+import React, { useState } from "react";
 import axios from "axios";
 import "./Feed.css";
 
-const videoConstraints = {
-  width: 640,
-  height: 480,
-  facingMode: "user",
-};
-
 const Feed = () => {
-  const webcamRef = useRef(null);
-  const [response, setResponse] = useState(null);
-  const [isSending, setIsSending] = useState(false);
   const [streaming, setStreaming] = useState(false);
+  const [metrics, setMetrics] = useState(null);
 
-  const capture = useCallback(() => {
-    return webcamRef.current.getScreenshot();
-  }, []);
-
-  const sendFrame = async () => {
-    if (!webcamRef.current) return;
-
+  const startCamera = async () => {
     try {
-      setIsSending(true);
+      await axios.get("http://localhost:5000/video"); // backend start endpoint
+      setStreaming(true);
 
-      const imageSrc = capture();
+      // poll metrics every 1 second
+      const interval = setInterval(async () => {
+        try {
+          const res = await axios.get("http://localhost:5000/metrics");
+          setMetrics(res.data);
+        } catch (err) {
+          console.error("Error fetching metrics:", err);
+        }
+      }, 1000);
 
-      const res = await axios.post("http://localhost:5000/analyze", {
-        image: imageSrc,
-      });
-
-      setResponse(res.data);
+      // store interval so we can clear later
+      window._metricsInterval = interval;
     } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSending(false);
+      console.error("Error starting camera:", err);
     }
   };
 
-  const startStreaming = () => {
-    setStreaming(true);
+  const stopCamera = async () => {
+    try {
+      await axios.get("http://localhost:5000/stop");
+      setStreaming(false);
+      setMetrics(null);
 
-    const loop = async () => {
-      if (!streaming) return;
-      await sendFrame();
-      requestAnimationFrame(loop);
-    };
-
-    loop();
-  };
-
-  const stopStreaming = () => {
-    setStreaming(false);
+      if (window._metricsInterval) {
+        clearInterval(window._metricsInterval);
+      }
+    } catch (err) {
+      console.error("Error stopping camera:", err);
+    }
   };
 
   return (
     <div className="camera-container">
-      <h1 className="title">Live Skill Coach</h1>
+      <h1 className="title">Real-Time Skill Coach</h1>
 
-      <div className="camera-card">
-        <Webcam
-          ref={webcamRef}
-          audio={false}
-          screenshotFormat="image/jpeg"
-          videoConstraints={videoConstraints}
-          className="webcam"
-        />
-
-        <div className="overlay">
-          {isSending && <span className="status">Analyzing...</span>}
+      <div className="feed-layout">
+        {/* CAMERA VIEW */}
+        <div className="camera-card">
+          {streaming ? (
+            <img
+              src="http://localhost:5000/video"
+              alt="Live Feed"
+              className="webcam"
+            />
+          ) : (
+            <div className="placeholder">
+              Click "Start" to begin camera feed
+            </div>
+          )}
         </div>
-      </div>
-      
-      <div className="controls">
-        <button onClick={sendFrame}>Capture</button>
 
-        {!streaming ? (
-          <button onClick={startStreaming}>Start Live</button>
-        ) : (
-          <button onClick={stopStreaming}>Stop</button>
+        {/* METRICS PANEL */}
+        {streaming && metrics && (
+          <div className="metrics-panel">
+            <div className="metrics-title">Live Metrics</div>
+
+            <div className="metric">
+              <span className="metric-label">CPM</span>
+              <span className="metric-value">{metrics.cpm}</span>
+            </div>
+
+            <div className="metric">
+              <span className="metric-label">Depth</span>
+              <span className="metric-value">{metrics.depth} cm</span>
+            </div>
+
+            <div className="metric">
+              <span className="metric-label">Depth Status</span>
+              <span
+                className={`metric-value ${
+                  metrics.depth_ok ? "ok" : "bad"
+                }`}
+              >
+                {metrics.depth_ok ? "OK" : "BAD"}
+              </span>
+            </div>
+
+            <div className="metric">
+              <span className="metric-label">Center</span>
+              <span
+                className={`metric-value ${
+                  metrics.center_ok ? "ok" : "bad"
+                }`}
+              >
+                {metrics.center_ok ? "OK" : "BAD"}
+              </span>
+            </div>
+
+            <div className="metric">
+              <span className="metric-label">Elbow Position</span>
+              <span
+                className={`metric-value ${
+                  metrics.elbow_ok ? "ok" : "bad"
+                }`}
+              >
+                {metrics.elbow_ok ? "OK" : "BAD"}
+              </span>
+            </div>
+
+            <div className="metric">
+              <span className="metric-label">Hand Position</span>
+              <span
+                className={`metric-value ${
+                  metrics.hands_ok ? "ok" : "bad"
+                }`}
+              >
+                {metrics.hands_ok ? "OK" : "BAD"}
+              </span>
+            </div>
+          </div>
         )}
       </div>
-      {response && (
-        <div className="response-box">
-          <h3>AI Feedback</h3>
-          <pre>{JSON.stringify(response, null, 2)}</pre>
-        </div>
-      )}
+
+      {/* CONTROLS */}
+      <div className="controls">
+        <button onClick={startCamera}>Start</button>
+        <button onClick={stopCamera}>Stop</button>
+      </div>
     </div>
   );
 };
 
-export default Feed ;
+export default Feed;
