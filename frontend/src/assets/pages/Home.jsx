@@ -109,19 +109,7 @@ const SkeletonPreview = () => (
 export const Home = () => {
   return (
     <>
-      {/* ── NAV ─────────────────────────────────────────────── */}
-      <nav className="nav">
-        <a href="#" className="nav-logo">
-          <span className="nav-logo-dot" />
-          PrecisionLABS
-        </a>
-        <ul className="nav-links">
-          <li><a href="#features">Features</a></li>
-          <li><a href="#how">How It Works</a></li>
-          <li><a href="#disciplines">Disciplines</a></li>
-          <li><a href="#cta" className="nav-cta">Launch Demo</a></li>
-        </ul>
-      </nav>
+    
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="hero">
@@ -146,7 +134,7 @@ export const Home = () => {
             </p>
 
             <div className="hero-actions">
-              <a href="#cta" className="btn-primary">▶ &nbsp;Launch Live Demo</a>
+              <a href="dashboard" className="btn-primary">▶ &nbsp;Launch Live Demo</a>
               <a href="#features" className="btn-secondary">Explore Features →</a>
             </div>
           </div>
@@ -237,15 +225,7 @@ export const Home = () => {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────── */}
-      <footer className="footer">
-        <span className="footer-copy">© 2025 PrecisionLABS · Procedural Training Intelligence</span>
-        <ul className="footer-links">
-          <li><a href="#">Docs</a></li>
-          <li><a href="#">Schema API</a></li>
-          <li><a href="#">Privacy</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </footer>
+      
     </>
   );
 };
