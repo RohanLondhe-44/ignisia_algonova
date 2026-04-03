@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   Circle,
   ArrowRight,
-  Wifi,
   ChevronRight,
 } from 'lucide-react';
 import './Dashboard.css';
@@ -22,8 +21,6 @@ const PROCEDURES = [
     subtitle: 'Cardiopulmonary Resuscitation',
     desc: 'Chest compression rhythm, hand placement, depth, and rate accuracy.',
     steps: 6,
-    difficulty: 'Intermediate',
-    diffColor: 'amber',
   },
   {
     id: 'scalpel',
@@ -32,8 +29,6 @@ const PROCEDURES = [
     subtitle: 'Surgical Incision Technique',
     desc: 'Grip angle, incision depth zone transitions, and dwell checkpoints.',
     steps: 8,
-    difficulty: 'Advanced',
-    diffColor: 'red',
   },
   {
     id: 'syringe',
@@ -42,8 +37,6 @@ const PROCEDURES = [
     subtitle: 'Intramuscular / IV Injection',
     desc: 'Approach angle, insertion depth, aspiration sequence, and withdrawal.',
     steps: 5,
-    difficulty: 'Beginner',
-    diffColor: 'green',
   },
 ];
 
@@ -76,10 +69,6 @@ export const Dashboard = () => {
             <p className="dash-header-label">PrecisionLABS</p>
             <h1 className="dash-header-title">Start a New Session</h1>
           </div>
-          <div className="dash-header-badge">
-            <Wifi size={13} strokeWidth={2.5} />
-            Camera Ready
-          </div>
         </header>
 
         {/* ══ STEP 01 — Select Procedure ══ */}
@@ -105,7 +94,6 @@ export const Dashboard = () => {
                     <span className="proc-icon-wrap">
                       <ProcIcon size={22} strokeWidth={1.8} />
                     </span>
-                    <span className={`proc-diff diff-${p.diffColor}`}>{p.difficulty}</span>
                   </div>
                   <h3 className="proc-title">{p.title}</h3>
                   <p className="proc-subtitle">{p.subtitle}</p>
