@@ -21,7 +21,6 @@ class CPRLogger:
             "cpm_ok": state.cpm_ok,
             "depth": state.depth_norm,
             "depth_ok": state.depth_ok,
-            "center_ok": state.center_ok,
             "elbow_ok": state.elbow_ok,
             "both_hands_ok": state.both_hands_ok
         }
@@ -267,7 +266,6 @@ def main(config: dict):
         metrics = [
             ("CPM",         f"{state.cpm:.0f}",    "bpm", state.cpm_ok),
             ("DEPTH",       f"{state.depth_norm*100:.1f}", "cm~", state.depth_ok),
-            ("CENTERING",   "OK" if state.center_ok else "OFF", "", state.center_ok),
             ("ELBOW LOCK",  "LOCKED" if state.elbow_ok else "BENT", "", state.elbow_ok),
             ("BOTH HANDS",  "YES" if state.both_hands_ok else "NO",  "", state.both_hands_ok),
         ]
@@ -427,16 +425,6 @@ def generate_frames(config):
                     state.cpm = (len(state.compress_times) - 1) / span * 60
             state.cpm_ok = config["cpm_low"] <= state.cpm <= config["cpm_high"]
 
-            ls_x, ls_y = norm_lm(lms, 11)
-            rs_x, rs_y = norm_lm(lms, 12)
-            chest_cx = (ls_x + rs_x) / 2
-            chest_cy = (ls_y + rs_y) / 2 + 0.1
-
-            x_ok = abs(mid_x - chest_cx) < config["chest_x_tolerance"]
-            yb = config["chest_y_band"]
-            y_ok = yb[0] < mid_y < yb[1]
-            state.center_ok = x_ok and y_ok
-
             elbow_ok_L = elbow_ok_R = None
             if L_vis:
                 ang = angle_between(norm_lm(lms, 11), norm_lm(lms, 13), norm_lm(lms, 15))
@@ -465,14 +453,7 @@ def generate_frames(config):
                     pt, _ = lm(lms, idx, w, h)
                     cv2.circle(frame, pt, 10, C_CYAN, 2)
 
-            tx = int(chest_cx * w)
-            ty = int(((ls_y + rs_y) / 2 + 0.15) * h)
-            col = C_GREEN if state.center_ok else C_RED
-            cv2.line(frame, (tx-18, ty), (tx+18, ty), col, 2)
-            cv2.line(frame, (tx, ty-18), (tx, ty+18), col, 2)
-            cv2.circle(frame, (tx, ty), 22, col, 1)
-            cv2.putText(frame, "TARGET", (tx+26, ty+5),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.38, col, 1, cv2.LINE_AA)
+
 
         cv2.putText(sidebar, "CPR MONITOR", (12, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, C_CYAN, 2, cv2.LINE_AA)
@@ -493,8 +474,7 @@ def generate_frames(config):
             y0 += 58
 
         all_ok = all(v is not None and v for v in [
-            state.cpm_ok, state.depth_ok,
-            state.center_ok, state.elbow_ok, state.both_hands_ok
+            state.cpm_ok, state.depth_ok, state.elbow_ok, state.both_hands_ok
         ])
 
         bar_col = C_GREEN if all_ok else C_RED
@@ -527,9 +507,9 @@ def generate_frames(config):
             last_log_time = current_time
         global LATEST_METRICS
         LATEST_METRICS = generate_metrics(state)
-        cap.release()
-        pose.close()
-        logger.save()
+    cap.release()
+    pose.close()
+    logger.save()
     
         
      
