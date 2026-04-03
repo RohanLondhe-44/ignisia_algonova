@@ -1,0 +1,44 @@
+:root {
+  --bg: #355872;
+  --card: #F7F8F0;
+
+  --text: #1e293b;
+  --text-muted: #64748b;
+
+  --accent: #9CD5FF;
+  --accent-soft: #e0f2fe;
+
+  --secondary: #7AAACE;
+
+  --border: #e2e8f0;
+
+  --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Soft dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: linear-gradient(135deg, #355872, #7AAACE);
+    --card: #F7F8F0;
+
+    --text: #1e293b;
+    --text-muted: #475569;
+
+    --accent: #9CD5FF;
+    --accent-soft: #e0f2fe;
+
+    --secondary: #7AAACE;
+
+    --border: #cbd5e1;
+
+    --shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* Base */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", sans-serif;
+}
