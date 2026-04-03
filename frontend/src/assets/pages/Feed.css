@@ -1,0 +1,76 @@
+.camera-container {
+  background: radial-gradient(circle at top, #0a0f1f, #05070d);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", sans-serif;
+  color: white;
+}
+
+.title {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: #00d4ff;
+  letter-spacing: 1px;
+}
+
+.camera-card {
+  position: relative;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(0, 212, 255, 0.05);
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.25);
+}
+
+.webcam {
+  border-radius: 12px;
+  width: 640px;
+  height: 480px;
+}
+
+.overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.status {
+  background: rgba(0, 212, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #00d4ff;
+  font-size: 0.9rem;
+}
+
+.controls {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.controls button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #00d4ff, #0077ff);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.controls button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #00d4ff;
+}
+
+.response-box {
+  margin-top: 25px;
+  width: 60%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 15px;
+  backdrop-filter: blur(10px);
+}
