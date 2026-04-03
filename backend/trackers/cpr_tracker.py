@@ -32,6 +32,13 @@ class CPRLogger:
 
 
 LATEST_METRICS = {}
+
+#ideal values
+IDEAL_POSE = {
+    "shoulder_width": 0.25,  
+    "elbow_angle": 180,       
+    "hand_offset_y": 0.15,    
+}
 #default values
 DEFAULT_CONFIG = {
     "camera_index":       0,
@@ -93,6 +100,62 @@ def put_metric(img, label, value, unit, color, x, y, ok=None):
         cv2.putText(img, unit, (x+18+tw[0]+4, y+32),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.38, C_DIM, 1, cv2.LINE_AA)
 
+def to_px(pt, w, h):
+    return int(pt[0]*w), int(pt[1]*h)
+
+
+def generate_ghost(lms):
+    # shoulders
+    ls = norm_lm(lms, 11)
+    rs = norm_lm(lms, 12)
+
+    shoulder_cx = (ls[0] + rs[0]) / 2
+
+    ghost = {}
+
+    ghost["ls"] = ls
+    ghost["rs"] = rs
+
+    # straight elbows
+    ghost["le"] = (ls[0], ls[1] + 0.15)
+    ghost["re"] = (rs[0], rs[1] + 0.15)
+
+    # centered wrists (CPR position)
+    ghost["lw"] = (shoulder_cx, ls[1] + 0.30)
+    ghost["rw"] = (shoulder_cx, rs[1] + 0.30)
+
+    return ghost
+
+
+def draw_ghost(frame, ghost, w, h, state):
+    overlay = frame.copy()
+
+    # dynamic movement (sync with compression)
+    offset = state.depth_norm * 2
+
+    ghost["lw"] = (ghost["lw"][0], ghost["lw"][1] + offset)
+    ghost["rw"] = (ghost["rw"][0], ghost["rw"][1] + offset)
+
+    # color based on correctness
+    color = (0,255,0) if state.depth_ok else (0,0,255)
+
+    pairs = [
+        ("ls", "le"), ("le", "lw"),
+        ("rs", "re"), ("re", "rw"),
+        ("ls", "rs")
+    ]
+
+    for a, b in pairs:
+        p1 = to_px(ghost[a], w, h)
+        p2 = to_px(ghost[b], w, h)
+        cv2.line(overlay, p1, p2, color, 2)
+
+    for k in ghost:
+        cv2.circle(overlay, to_px(ghost[k], w, h), 6, color, -1)
+
+    # blend (ghost effect)
+    cv2.addWeighted(overlay, 0.4, frame, 0.6, 0, frame)
+
 
 @dataclass
 class CPRState:
@@ -100,7 +163,7 @@ class CPRState:
     wrist_y_history:  collections.deque = field(default_factory=lambda: collections.deque(maxlen=120))
     compress_times:   collections.deque = field(default_factory=lambda: collections.deque(maxlen=30))
     in_compress:      bool  = False
-    peak_y:           float = 0.0
+    peak_y:           float = 1.0
     trough_y:         float = 0.0
     last_peak_y:      float = 0.0
 
@@ -148,7 +211,8 @@ def main(config: dict):
 
         if res.pose_landmarks:
             lms = res.pose_landmarks.landmark
-
+            ghost = generate_ghost(lms)
+            draw_ghost(frame, ghost, w, h, state)
             # Landmark indices 
             # 11 = L_shoulder 12 = R_shoulder
             # 13 = L_elbow    14 = R_elbow
@@ -194,7 +258,12 @@ def main(config: dict):
                        
                         depth = state.trough_y - state.peak_y
                         state.depth_norm = depth
-                        state.compress_times.append(time.time())
+                        if not hasattr(state, "last_comp_time"):
+                            state.last_comp_time = 0
+
+                        if time.time() - state.last_comp_time > 0.3:  
+                            state.compress_times.append(time.time())
+                            state.last_comp_time = time.time()
                         state.in_compress = False
                         state.peak_y      = smooth_y
 
@@ -366,7 +435,8 @@ def generate_frames(config):
 
         if res.pose_landmarks:
             lms = res.pose_landmarks.landmark
-
+            ghost = generate_ghost(lms)
+            draw_ghost(frame, ghost, w, h, state)
             vis_thresh = 0.5
             def visible(idx): return lms[idx].visibility > vis_thresh
 
