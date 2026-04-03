@@ -109,7 +109,6 @@ class CPRState:
     cpm:              float = 0.0
     depth_norm:       float = 0.0  
     depth_ok:         Optional[bool] = None
-    center_ok:        Optional[bool] = None
     elbow_ok:         Optional[bool] = None
     both_hands_ok:    Optional[bool] = None
     cpm_ok:           Optional[bool] = None
@@ -224,17 +223,6 @@ def main(config: dict):
             state.cpm_ok = config["cpm_low"] <= state.cpm <= config["cpm_high"]
 
             
-            ls_x, ls_y = norm_lm(lms, 11)
-            rs_x, rs_y = norm_lm(lms, 12)
-            chest_cx   = (ls_x + rs_x) / 2
-            chest_cy   = (ls_y + rs_y) / 2 + 0.1  
-
-            x_ok = abs(mid_x - chest_cx) < config["chest_x_tolerance"]
-            yb   = config["chest_y_band"]
-            y_ok = yb[0] < mid_y < yb[1]
-            state.center_ok = x_ok and y_ok
-
-            
             elbow_ok_L = elbow_ok_R = None
             if L_vis:
                 sh = norm_lm(lms, 11)
@@ -271,16 +259,6 @@ def main(config: dict):
                     pt, _ = lm(lms, idx, w, h)
                     cv2.circle(frame, pt, 10, C_CYAN, 2)
 
-            
-            tx = int(chest_cx * w)
-            ty = int(((ls_y+rs_y)/2 + 0.15) * h)
-            col = C_GREEN if state.center_ok else C_RED
-            cv2.line(frame, (tx-18, ty), (tx+18, ty), col, 2)
-            cv2.line(frame, (tx, ty-18), (tx, ty+18), col, 2)
-            cv2.circle(frame, (tx, ty), 22, col, 1)
-            cv2.putText(frame, "TARGET", (tx+26, ty+5),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.38, col, 1, cv2.LINE_AA)
-
         
         cv2.putText(sidebar, "CPR MONITOR", (12, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, C_CYAN, 2, cv2.LINE_AA)
@@ -305,7 +283,7 @@ def main(config: dict):
         all_ok = all(
             v is not None and v
             for v in [state.cpm_ok, state.depth_ok,
-                      state.center_ok, state.elbow_ok, state.both_hands_ok]
+          state.elbow_ok, state.both_hands_ok]
         )
         bar_col = C_GREEN if all_ok else C_RED
         bar_txt = "GOOD CPR" if all_ok else "CHECK FORM"
@@ -503,7 +481,6 @@ def generate_frames(config):
         metrics = [
             ("CPM", f"{state.cpm:.0f}", "bpm", state.cpm_ok),
             ("DEPTH", f"{state.depth_norm*100:.1f}", "cm~", state.depth_ok),
-            ("CENTERING", "OK" if state.center_ok else "OFF", "", state.center_ok),
             ("ELBOW LOCK", "LOCKED" if state.elbow_ok else "BENT", "", state.elbow_ok),
             ("BOTH HANDS", "YES" if state.both_hands_ok else "NO", "", state.both_hands_ok),
         ]
@@ -561,7 +538,6 @@ def generate_metrics(state):
         "cpm": round(state.cpm, 2),
         "depth": round(state.depth_norm * 100, 2),
         "depth_ok": state.depth_ok,
-        "center_ok": state.center_ok,
         "elbow_ok": state.elbow_ok,
         "hands_ok": state.both_hands_ok,
         "cpm_ok": state.cpm_ok
