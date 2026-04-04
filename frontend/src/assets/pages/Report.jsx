@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./report.css";
 import { useRef } from "react";
+import "./Home.css";
 
 /* ── helpers ── */
 const sessionId = () =>
@@ -186,11 +187,20 @@ if (!hasSavedRef.current) {
         <div className="nav-logo-dot" />
         PrecisionLABS
       </a>
+      
       <div className="nav-actions">
-        <span className="nav-badge">Session Report</span>
-        <button className="nav-btn" onClick={() => window.print()}>
+        <ul className="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li>
+            <button className="nav-btn" onClick={() => window.print()}>
           ↓ Export PDF
         </button>
+          </li>
+       
+        </ul>
+        
+        
       </div>
     </nav>
   );

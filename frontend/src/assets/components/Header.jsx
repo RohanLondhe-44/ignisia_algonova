@@ -11,9 +11,8 @@ export const Header = () => {
           PrecisionLABS
         </a>
         <ul className="nav-links">
-          <li><a href="#features">Features</a></li>
-          <li><a href="#how">How It Works</a></li>
-          <li><a href="#disciplines">Disciplines</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
           <li><a href="dashboard" className="nav-cta">Launch Demo</a></li>
         </ul>
       </nav></>
