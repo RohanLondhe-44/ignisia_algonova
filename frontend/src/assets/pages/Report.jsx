@@ -47,15 +47,17 @@ const ScoreArc = ({ score }) => {
 };
 
 /* ── metric card ── */
-const MetricCard = ({ mod, icon, val, unit, label, pct }) => (
+const MetricCard = ({ mod, val, unit, label, pct }) => (
   <div className={`metric-card metric-card--${mod}`}>
-    <div className="metric-icon">{icon}</div>
     <div className="metric-val">
       {val}<span>{unit}</span>
     </div>
     <div className="metric-label">{label}</div>
     <div className="metric-bar">
-      <div className="metric-bar-fill" style={{ width: `${pct}%` }} />
+      <div
+        className="metric-bar-fill"
+        style={{ width: `${pct}%` }}
+      />
     </div>
   </div>
 );
@@ -284,28 +286,40 @@ if (!hasSavedRef.current) {
         </div>
 
         {/* ── 4 Metric Cards ── */}
-        <div className="metrics-section">
-          <span className="section-eyebrow">Accuracy Breakdown</span>
-          <div className="section-title">Performance Metrics</div>
-          <div className="metrics-grid">
-            <MetricCard
-              mod="cpm" icon="♻" val={cpmScore} unit="%" label="CPM Accuracy"
-              pct={parseFloat(cpmScore)}
-            />
-            <MetricCard
-              mod="depth" icon="↕" val={depthScore} unit="%" label="Depth Accuracy"
-              pct={parseFloat(depthScore)}
-            />
-            <MetricCard
-              mod="elbow" icon="💪" val={elbowScore} unit="%" label="Elbow Position"
-              pct={parseFloat(elbowScore)}
-            />
-            <MetricCard
-              mod="hands" icon="🤲" val={handsScore} unit="%" label="Hand Placement"
-              pct={parseFloat(handsScore)}
-            />
-          </div>
-        </div>
+<div className="metrics-section">
+  <span className="section-eyebrow">Accuracy Breakdown</span>
+  <div className="section-title">Performance Metrics</div>
+  <div className="metrics-grid">
+    <MetricCard
+      mod="cpm"
+      val={cpmScore}
+      unit="%"
+      label="CPM Accuracy"
+      pct={parseFloat(cpmScore)}
+    />
+    <MetricCard
+      mod="depth"
+      val={depthScore}
+      unit="%"
+      label="Depth Accuracy"
+      pct={parseFloat(depthScore)}
+    />
+    <MetricCard
+      mod="elbow"
+      val={elbowScore}
+      unit="%"
+      label="Elbow Position"
+      pct={parseFloat(elbowScore)}
+    />
+    <MetricCard
+      mod="hands"
+      val={handsScore}
+      unit="%"
+      label="Hand Placement"
+      pct={parseFloat(handsScore)}
+    />
+  </div>
+</div>
 
         {/* ── Depth range ── */}
         <div className="depth-section">
