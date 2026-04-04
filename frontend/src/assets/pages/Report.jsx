@@ -1,307 +1,337 @@
-import React, { useState } from 'react';
-import {
-  HeartPulse,
-  Syringe,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  Clock,
-  Calendar,
-  Download,
-  Printer,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  ChevronDown,
-  ChevronUp,
-  BarChart2,
-  ShieldCheck,
-  Zap,
-  Activity,
-} from 'lucide-react';
-import './Report.css';
+import React, { useEffect, useState } from "react";
+import "./report.css";
 
-// ─── Sample report data (replace with real session data) ────────
-const REPORT = {
-  id: 'RPT-20250612-001',
-  procedure: 'CPR',
-  procedureIcon: HeartPulse,
-  subtitle: 'Cardiopulmonary Resuscitation',
-  difficulty: 'Intermediate',
-  practiceStart: 'Jun 12, 2025 — 09:14 AM',
-  practiceEnd:   'Jun 12, 2025 — 09:19 AM',
-  durationMinutes: 5,
-  overallScore: 94,
-  previousScore: 78,
-  status: 'passed',      // passed | review | failed
-  trainee: 'Student Name',
-  institution: 'PrecisionLABS Training',
+/* ── helpers ── */
+const sessionId = () =>
+  "SES-" + Math.random().toString(36).slice(2, 8).toUpperCase();
 
-  metrics: [
-    { label: 'Grip Accuracy',     value: 96, unit: '%',  icon: ShieldCheck },
-    { label: 'Rhythm Consistency',value: 91, unit: '%',  icon: Activity },
-    { label: 'Avg Response Time', value: 82, unit: 'ms', icon: Zap },
-    { label: 'Steps Completed',   value: '6/6', unit: '',icon: BarChart2 },
-  ],
-
-  steps: [
-    { id: 1, label: 'Scene safety check',          status: 'done',    time: '00:08' },
-    { id: 2, label: 'Check responsiveness',         status: 'done',    time: '00:14' },
-    { id: 3, label: 'Call for help / AED',          status: 'done',    time: '00:22' },
-    { id: 4, label: 'Chest compressions — 30x',     status: 'done',    time: '00:55' },
-    { id: 5, label: 'Rescue breaths — 2x',          status: 'warning', time: '01:10' },
-    { id: 6, label: 'Continue CPR cycle',           status: 'done',    time: '04:58' },
-  ],
-
-  alerts: [
-    { time: '00:52', type: 'warning', message: 'Compression depth slightly shallow — press deeper by ~1 cm' },
-    { time: '01:08', type: 'error',   message: 'Rescue breath angle incorrect — tilt head further back' },
-  ],
-
-  fatigueDetected: false,
-  fatigueTimestamp: null,
+const gradeOf = (score) => {
+  if (score >= 90) return { label: "EXCELLENT", cls: "score-grade--ace" };
+  if (score >= 70) return { label: "GOOD",      cls: "score-grade--pass" };
+  if (score >= 50) return { label: "NEEDS WORK",cls: "score-grade--warn" };
+  return           { label: "CRITICAL",         cls: "score-grade--fail" };
 };
 
-// ─── Helpers ────────────────────────────────────────────────────
-function ScoreDelta({ current, previous }) {
-  const diff = current - previous;
-  if (diff > 0) return (
-    <span className="rpt-delta rpt-delta-up">
-      <TrendingUp size={13} strokeWidth={2.5} /> +{diff} vs last
-    </span>
-  );
-  if (diff < 0) return (
-    <span className="rpt-delta rpt-delta-down">
-      <TrendingDown size={13} strokeWidth={2.5} /> {diff} vs last
-    </span>
-  );
-  return (
-    <span className="rpt-delta rpt-delta-flat">
-      <Minus size={13} strokeWidth={2.5} /> No change
-    </span>
-  );
-}
+/* Clamp a CPM value (0–180) to a 0–100% position on the range bar */
+const cpmToPercent = (cpm) => Math.min(Math.max((cpm / 180) * 100, 0), 100);
 
-function ScoreArc({ score }) {
-  const r = 52;
-  const circ = Math.PI * r; // half circle
-  const fill = (score / 100) * circ;
-  const color = score >= 85 ? '#16a34a' : score >= 65 ? '#d97706' : '#dc2626';
+/* ── arc SVG for overall score ── */
+const ScoreArc = ({ score }) => {
+  const r = 48, cx = 60, cy = 60;
+  const circ = 2 * Math.PI * r;
+  const dash  = (score / 100) * circ;
+  const color =
+    score >= 90 ? "#00e5ff" :
+    score >= 70 ? "#00e676" :
+    score >= 50 ? "#ffc107" : "#ff4d4d";
+
   return (
-    <svg width="140" height="80" viewBox="0 0 140 80" className="score-arc-svg">
+    <svg width="120" height="80" viewBox="0 0 120 100" className="score-arc">
       {/* track */}
-      <path
-        d="M 14 74 A 56 56 0 0 1 126 74"
-        fill="none" stroke="#e5e7eb" strokeWidth="8" strokeLinecap="round"
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6"
+        strokeDasharray={`${circ * 0.75} ${circ * 0.25}`}
+        strokeDashoffset={circ * 0.875}
+        strokeLinecap="round"
       />
       {/* fill */}
-      <path
-        d="M 14 74 A 56 56 0 0 1 126 74"
-        fill="none"
-        stroke={color}
-        strokeWidth="8"
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="6"
+        strokeDasharray={`${dash * 0.75} ${circ}`}
+        strokeDashoffset={circ * 0.875}
         strokeLinecap="round"
-        strokeDasharray={`${(score / 100) * 175.9} 175.9`}
-        style={{ transition: 'stroke-dasharray 0.8s cubic-bezier(.4,0,.2,1)' }}
+        style={{ transition: "stroke-dasharray 1.2s cubic-bezier(0.16,1,0.3,1)" }}
       />
-      <text x="70" y="68" textAnchor="middle" fontSize="26" fontWeight="800"
-        fontFamily="Syne, sans-serif" fill={color}>{score}</text>
-      <text x="70" y="80" textAnchor="middle" fontSize="9" fontWeight="600"
-        fontFamily="DM Sans, sans-serif" fill="#9ca3af" letterSpacing="2">SCORE</text>
     </svg>
   );
-}
+};
 
-// ─── Component ─────────────────────────────────────────────────
-const Report = () => {
-  const [alertsOpen, setAlertsOpen] = useState(true);
-  const r = REPORT;
-  const ProcIcon = r.procedureIcon;
+/* ── metric card ── */
+const MetricCard = ({ mod, icon, val, unit, label, pct }) => (
+  <div className={`metric-card metric-card--${mod}`}>
+    <div className="metric-icon">{icon}</div>
+    <div className="metric-val">
+      {val}<span>{unit}</span>
+    </div>
+    <div className="metric-label">{label}</div>
+    <div className="metric-bar">
+      <div className="metric-bar-fill" style={{ width: `${pct}%` }} />
+    </div>
+  </div>
+);
 
-  const statusMap = {
-    passed: { label: 'PASSED',       bg: '#dcfce7', color: '#15803d', border: '#bbf7d0' },
-    review: { label: 'NEEDS REVIEW', bg: '#fef9c3', color: '#a16207', border: '#fde68a' },
-    failed: { label: 'FAILED',       bg: '#fee2e2', color: '#b91c1c', border: '#fecaca' },
-  };
-  const st = statusMap[r.status];
-
+/* ── CPM range bar ── */
+const CPMRangeBar = ({ cpm }) => {
+  const needle = cpmToPercent(cpm);
+  // 100–120 CPM is "the zone": 55.5%–66.7% of 180
   return (
-    <div className="rpt-page">
-
-      {/* ── Dark top bar (matches dashboard) ── */}
-      <div className="rpt-topbar">
-        <div className="rpt-topbar-inner">
-          <a href="/dashboard" className="rpt-back">
-            <span className="rpt-back-dot" />
-            PrecisionLABS
-          </a>
-          <div className="rpt-topbar-actions">
-            <button className="rpt-btn-ghost" onClick={() => window.print()}>
-              <Printer size={15} strokeWidth={2} /> Print
-            </button>
-            <button className="rpt-btn-accent">
-              <Download size={15} strokeWidth={2} /> Download PDF
-            </button>
-          </div>
-        </div>
+    <div className="cpm-range-indicator">
+      <div className="cpm-range-bar">
+        <div className="cpm-range-zone" style={{ left: "55.5%", width: "11.2%" }} />
+        <div className="cpm-range-needle" style={{ left: `${needle}%` }} />
       </div>
-
-      {/* ── White report body ── */}
-      <div className="rpt-wrap">
-        <div className="rpt-paper" id="report-print">
-
-          {/* ════ REPORT HEADER ════ */}
-          <div className="rpt-header">
-            <div className="rpt-header-left">
-              <div className="rpt-id-row">
-                <span className="rpt-id">{r.id}</span>
-                <span
-                  className="rpt-status-badge"
-                  style={{ background: st.bg, color: st.color, borderColor: st.border }}
-                >
-                  {st.label}
-                </span>
-              </div>
-              <h1 className="rpt-title">Practice Session Report</h1>
-              <p className="rpt-institution">{r.institution} · {r.trainee}</p>
-            </div>
-
-            {/* score arc */}
-            <div className="rpt-score-block">
-              <ScoreArc score={r.overallScore} />
-              <ScoreDelta current={r.overallScore} previous={r.previousScore} />
-            </div>
-          </div>
-
-          {/* ════ PRACTICE PERIOD ════ */}
-          <div className="rpt-period-band">
-            <div className="rpt-period-item">
-              <div className="rpt-period-icon"><ProcIcon size={16} strokeWidth={1.8} /></div>
-              <div>
-                <p className="rpt-period-key">Procedure</p>
-                <p className="rpt-period-val">{r.procedure} <span className="rpt-period-sub">— {r.subtitle}</span></p>
-              </div>
-            </div>
-            <div className="rpt-period-divider" />
-            <div className="rpt-period-item">
-              <div className="rpt-period-icon"><Calendar size={16} strokeWidth={1.8} /></div>
-              <div>
-                <p className="rpt-period-key">Practice Start</p>
-                <p className="rpt-period-val">{r.practiceStart}</p>
-              </div>
-            </div>
-            <div className="rpt-period-divider" />
-            <div className="rpt-period-item">
-              <div className="rpt-period-icon"><Calendar size={16} strokeWidth={1.8} /></div>
-              <div>
-                <p className="rpt-period-key">Practice End</p>
-                <p className="rpt-period-val">{r.practiceEnd}</p>
-              </div>
-            </div>
-            <div className="rpt-period-divider" />
-            <div className="rpt-period-item">
-              <div className="rpt-period-icon"><Clock size={16} strokeWidth={1.8} /></div>
-              <div>
-                <p className="rpt-period-key">Total Duration</p>
-                <p className="rpt-period-val">{r.durationMinutes} minutes</p>
-              </div>
-            </div>
-          </div>
-
-          {/* ════ METRICS GRID ════ */}
-          <div className="rpt-section">
-            <h2 className="rpt-section-title">Performance Metrics</h2>
-            <div className="rpt-metrics-grid">
-              {r.metrics.map((m) => {
-                const MIcon = m.icon;
-                return (
-                  <div className="rpt-metric-card" key={m.label}>
-                    <div className="rpt-metric-icon"><MIcon size={16} strokeWidth={1.8} /></div>
-                    <p className="rpt-metric-val">{m.value}<span className="rpt-metric-unit">{m.unit}</span></p>
-                    <p className="rpt-metric-label">{m.label}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ════ STEP CHECKLIST ════ */}
-          <div className="rpt-section">
-            <h2 className="rpt-section-title">Step Completion</h2>
-            <div className="rpt-steps">
-              {r.steps.map((s, i) => (
-                <div
-                  className={`rpt-step rpt-step-${s.status}`}
-                  key={s.id}
-                  style={{ animationDelay: `${i * 0.06}s` }}
-                >
-                  <div className="rpt-step-icon">
-                    {s.status === 'done'    && <CheckCircle2  size={18} strokeWidth={2} />}
-                    {s.status === 'warning' && <AlertTriangle size={18} strokeWidth={2} />}
-                    {s.status === 'failed'  && <XCircle       size={18} strokeWidth={2} />}
-                  </div>
-                  <span className="rpt-step-num">Step {s.id}</span>
-                  <span className="rpt-step-label">{s.label}</span>
-                  <span className="rpt-step-time">{s.time}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ════ ALERT LOG ════ */}
-          <div className="rpt-section">
-            <button
-              className="rpt-section-title rpt-collapsible"
-              onClick={() => setAlertsOpen(o => !o)}
-            >
-              Corrective Alerts
-              <span className="rpt-alert-count">{r.alerts.length}</span>
-              {alertsOpen ? <ChevronUp size={16} strokeWidth={2} /> : <ChevronDown size={16} strokeWidth={2} />}
-            </button>
-
-            {alertsOpen && (
-              <div className="rpt-alerts">
-                {r.alerts.length === 0 ? (
-                  <div className="rpt-alerts-empty">
-                    <CheckCircle2 size={18} strokeWidth={2} style={{ color: '#15803d' }} />
-                    No corrective alerts — perfect session!
-                  </div>
-                ) : r.alerts.map((a, i) => (
-                  <div className={`rpt-alert rpt-alert-${a.type}`} key={i}>
-                    <span className="rpt-alert-time">{a.time}</span>
-                    <div className="rpt-alert-icon">
-                      {a.type === 'warning'
-                        ? <AlertTriangle size={14} strokeWidth={2.5} />
-                        : <XCircle size={14} strokeWidth={2.5} />}
-                    </div>
-                    <p className="rpt-alert-msg">{a.message}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* ════ FATIGUE ════ */}
-          <div className="rpt-section rpt-section-last">
-            <h2 className="rpt-section-title">Fatigue Analysis</h2>
-            <div className={`rpt-fatigue-banner ${r.fatigueDetected ? 'rpt-fatigue-yes' : 'rpt-fatigue-no'}`}>
-              {r.fatigueDetected
-                ? <><AlertTriangle size={16} strokeWidth={2} /> Hand fatigue detected at {r.fatigueTimestamp} — mandatory rest was enforced.</>
-                : <><CheckCircle2  size={16} strokeWidth={2} /> No hand fatigue detected during this session. Tremor levels within normal range.</>
-              }
-            </div>
-          </div>
-
-          {/* ════ PRINT FOOTER ════ */}
-          <div className="rpt-print-footer">
-            <span>{r.institution}</span>
-            <span>{r.id}</span>
-            <span>Generated by PrecisionLABS</span>
-          </div>
-
-        </div>{/* /rpt-paper */}
+      <div className="cpm-range-labels">
+        <span>0</span><span>60</span><span>100</span><span>120</span><span>180</span>
       </div>
     </div>
   );
 };
+
+/* ══════════════════════════════════════════════════════════════ */
+
+const Report = () => {
+  const [report, setReport] = useState(null);
+  const [sid]   = useState(sessionId);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/cpr-log")
+      .then((res) => res.json())
+      .then((data) => analyze(data))
+      .catch((err) => {
+        console.error("Error loading CPR log:", err);
+        setReport({ error: "Could not connect to session server." });
+      });
+  }, []);
+
+  const analyze = (log) => {
+    if (!log || log.length === 0) {
+      setReport({ error: "No CPR activity detected in session." });
+      return;
+    }
+
+    const active = log.filter((e) => e.cpm > 0);
+    if (active.length === 0) {
+      setReport({ error: "No active compressions found." });
+      return;
+    }
+
+    let totalCPM = 0, cpmOk = 0, depthOk = 0, elbowOk = 0, handsOk = 0;
+    let minDepth = Infinity, maxDepth = -Infinity;
+
+    active.forEach((e) => {
+      totalCPM += e.cpm;
+      if (e.cpm_ok)        cpmOk++;
+      if (e.depth_ok)      depthOk++;
+      if (e.elbow_ok)      elbowOk++;
+      if (e.both_hands_ok) handsOk++;
+      minDepth = Math.min(minDepth, e.depth);
+      maxDepth = Math.max(maxDepth, e.depth);
+    });
+
+    const n = active.length;
+    const avgCPM     = totalCPM / n;
+    const cpmScore   = (cpmOk   / n) * 100;
+    const depthScore = (depthOk / n) * 100;
+    const elbowScore = (elbowOk / n) * 100;
+    const handsScore = (handsOk / n) * 100;
+    const overall    = 0.4*cpmScore + 0.3*depthScore + 0.2*elbowScore + 0.1*handsScore;
+
+    const feedback = [];
+    if (cpmScore   < 60) feedback.push("Maintain a steady compression rhythm (100–120 CPM)");
+    if (depthScore < 60) feedback.push("Improve compression depth consistency");
+    if (elbowScore < 60) feedback.push("Keep your elbows locked during compressions");
+    if (handsScore < 60) feedback.push("Ensure both hands are correctly placed");
+    if (feedback.length === 0) feedback.push("Excellent CPR performance! All metrics within range.");
+
+    setReport({
+      avgCPM: avgCPM.toFixed(1),
+      cpmScore:   cpmScore.toFixed(1),
+      depthScore: depthScore.toFixed(1),
+      elbowScore: elbowScore.toFixed(1),
+      handsScore: handsScore.toFixed(1),
+      minDepth: minDepth.toFixed(3),
+      maxDepth: maxDepth.toFixed(3),
+      overall: overall.toFixed(1),
+      feedback,
+    });
+  };
+
+  /* ── nav ── */
+  const Nav = () => (
+    <nav className="nav">
+      <a href="/" className="nav-logo">
+        <div className="nav-logo-dot" />
+        PrecisionLABS
+      </a>
+      <div className="nav-actions">
+        <span className="nav-badge">Session Report</span>
+        <button className="nav-btn" onClick={() => window.print()}>
+          ↓ Export PDF
+        </button>
+      </div>
+    </nav>
+  );
+
+  if (!report) return (
+    <>
+      <Nav />
+      <div className="report-page">
+        <div className="report-loading">
+          <div className="report-loading-spinner" />
+          <div className="report-loading-text">Analyzing session data…</div>
+        </div>
+      </div>
+    </>
+  );
+
+  if (report.error) return (
+    <>
+      <Nav />
+      <div className="report-page">
+        <div className="report-error">
+          <div className="report-error-icon">⚠</div>
+          <div className="report-error-msg">{report.error}</div>
+        </div>
+      </div>
+    </>
+  );
+
+  const { overall, avgCPM, cpmScore, depthScore, elbowScore, handsScore,
+          minDepth, maxDepth, feedback } = report;
+  const grade = gradeOf(parseFloat(overall));
+  const isSuccess = feedback[0].startsWith("Excellent");
+
+  return (
+    <>
+      <Nav />
+      <main className="report-page">
+
+        {/* ── Header ── */}
+        <div className="report-header">
+          <div className="report-header-left">
+            <div className="report-eyebrow">
+              <span className="report-label">CPR Assessment</span>
+              <span className="report-session-id">{sid}</span>
+            </div>
+            <h1 className="report-title">Performance<br />Report</h1>
+            <p className="report-subtitle">
+              PrecisionLABS · Procedural Training Intelligence
+            </p>
+          </div>
+
+          <div className="score-block">
+            <ScoreArc score={parseFloat(overall)} />
+            <div className="score-value">
+              {overall}<span className="score-denom">/100</span>
+            </div>
+            <div className="score-label-text">Overall Score</div>
+            <div className={`score-grade ${grade.cls}`}>{grade.label}</div>
+          </div>
+        </div>
+
+        {/* ── Avg CPM banner ── */}
+        <div className="cpm-display">
+          <div>
+            <div className="cpm-unit" style={{ marginBottom: 4, fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+              Avg Compression Rate
+            </div>
+            <span className="cpm-val">{avgCPM}</span>
+            {" "}<span className="cpm-unit">CPM</span>
+          </div>
+          <div className="cpm-divider" />
+          <div className="cpm-context">
+            <span className="cpm-context-label">Target Range</span>
+            <span className="cpm-context-val">100 – 120 CPM</span>
+          </div>
+          <div className="cpm-context">
+            <span className="cpm-context-label">AHA Guideline</span>
+            <span className="cpm-context-val">Hard &amp; Fast</span>
+          </div>
+          <CPMRangeBar cpm={parseFloat(avgCPM)} />
+        </div>
+
+        {/* ── 4 Metric Cards ── */}
+        <div className="metrics-section">
+          <span className="section-eyebrow">Accuracy Breakdown</span>
+          <div className="section-title">Performance Metrics</div>
+          <div className="metrics-grid">
+            <MetricCard
+              mod="cpm" icon="♻" val={cpmScore} unit="%" label="CPM Accuracy"
+              pct={parseFloat(cpmScore)}
+            />
+            <MetricCard
+              mod="depth" icon="↕" val={depthScore} unit="%" label="Depth Accuracy"
+              pct={parseFloat(depthScore)}
+            />
+            <MetricCard
+              mod="elbow" icon="💪" val={elbowScore} unit="%" label="Elbow Position"
+              pct={parseFloat(elbowScore)}
+            />
+            <MetricCard
+              mod="hands" icon="🤲" val={handsScore} unit="%" label="Hand Placement"
+              pct={parseFloat(handsScore)}
+            />
+          </div>
+        </div>
+
+        {/* ── Depth range ── */}
+        <div className="depth-section">
+          <span className="section-eyebrow">Compression Depth</span>
+          <div className="section-title">Depth Range</div>
+          <div className="depth-row">
+            <div className="depth-card">
+              <div className="depth-card-left">
+                <div className="depth-card-label">Minimum Depth</div>
+                <div className="depth-card-val">
+                  {minDepth}<span>m</span>
+                </div>
+                <div className="depth-target">
+                  <div className="depth-target-dot" style={{ background: "var(--yellow)" }} />
+                  Target: ≥ 0.05 m (2 in)
+                </div>
+              </div>
+              <div className="depth-card-icon">⬇</div>
+            </div>
+            <div className="depth-card">
+              <div className="depth-card-left">
+                <div className="depth-card-label">Maximum Depth</div>
+                <div className="depth-card-val">
+                  {maxDepth}<span>m</span>
+                </div>
+                <div className="depth-target">
+                  <div className="depth-target-dot" style={{ background: "var(--accent)" }} />
+                  Target: ≤ 0.06 m (2.4 in)
+                </div>
+              </div>
+              <div className="depth-card-icon">⬆</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Feedback ── */}
+        <div className="feedback-section">
+          <span className="section-eyebrow">Coaching Insights</span>
+          <div className="section-title">Feedback</div>
+          <div className="feedback-list">
+            {feedback.map((f, i) => (
+              <div
+                key={i}
+                className={`feedback-item ${isSuccess ? "feedback-item--success" : "feedback-item--warn"}`}
+                style={{ animationDelay: `${0.05 * i}s` }}
+              >
+                <span className="feedback-icon">
+                  {isSuccess ? "✓" : "⚠"}
+                </span>
+                <span className="feedback-text">{f}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="report-divider" />
+
+        {/* ── Footer ── */}
+        <footer className="report-footer">
+          <div className="report-footer-brand">
+            <span>Precision</span>LABS · Procedural Training Intelligence
+          </div>
+          <div className="report-footer-meta">
+            {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+            &nbsp;·&nbsp;{sid}
+          </div>
+        </footer>
+
+      </main>
+    </>
+  );
+};
+
 export default Report;
