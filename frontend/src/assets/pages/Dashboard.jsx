@@ -12,6 +12,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import './Dashboard.css';
+import {useNavigate} from "react-router-dom";
 
 const PROCEDURES = [
   {
@@ -58,6 +59,10 @@ export const Dashboard = () => {
   };
 
   const selectedProc = PROCEDURES.find(p => p.id === selected);
+  
+  const navigate = useNavigate()
+
+  const navtofeed = () => navigate("/feed");
 
   return (
     <div className="dash-root">
@@ -194,7 +199,7 @@ export const Dashboard = () => {
 
             <button
               className={`btn-launch ${!selected ? 'btn-launch-disabled' : ''} ${launched ? 'btn-launch-go' : ''}`}
-              onClick={handleStart}
+              onClick={navtofeed}
               disabled={!selected}
             >
               <Play size={16} strokeWidth={2.5} fill="currentColor" />

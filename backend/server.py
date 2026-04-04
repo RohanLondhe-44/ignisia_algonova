@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from groq import Groq
 import threading
 import time
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -74,6 +75,11 @@ def video_feed():
 def metrics():
     return jsonify(tracker.LATEST_METRICS)
 
+@app.route('/cpr-log')
+def get_log():
+    with open("cpr_log.json") as f:
+        data = json.load(f)
+    return jsonify(data)
 # -------------------- MAIN --------------------
 
 if __name__ == "__main__":
