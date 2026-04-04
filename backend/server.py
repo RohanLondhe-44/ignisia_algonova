@@ -10,7 +10,7 @@ from groq import Groq
 import threading
 import time
 import json
-
+from flask import request
 app = Flask(__name__)
 CORS(app)
 
@@ -80,7 +80,39 @@ def get_log():
     with open("cpr_log.json") as f:
         data = json.load(f)
     return jsonify(data)
-# -------------------- MAIN --------------------
+
+import json
+import os
+
+SESSIONS_FILE = "sessions.json"
+
+
+@app.route("/save-session", methods=["POST"])
+def save_session():
+    data = request.get_json()
+
+    if os.path.exists(SESSIONS_FILE):
+        with open(SESSIONS_FILE, "r") as f:
+            sessions = json.load(f)
+    else:
+        sessions = []
+
+    sessions.append(data)
+
+    # Save back
+    with open(SESSIONS_FILE, "w") as f:
+        json.dump(sessions, f, indent=2)
+
+    return {"status": "saved"}
+
+@app.route('/sessions')
+def get_sessions():
+    if os.path.exists("sessions.json"):
+        with open("sessions.json", "r") as f:
+            data = json.load(f)
+        return jsonify(data)
+    return jsonify([])
+
 
 if __name__ == "__main__":
     # Start AI feedback in background

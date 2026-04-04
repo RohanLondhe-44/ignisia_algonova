@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./report.css";
+import { useRef } from "react";
 
 /* ── helpers ── */
 const sessionId = () =>
@@ -77,9 +78,24 @@ const CPMRangeBar = ({ cpm }) => {
 
 /* ══════════════════════════════════════════════════════════════ */
 
+const saveSession = async (data) => {
+  try {
+    await fetch("http://localhost:5000/save-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  } catch (err) {
+    console.error("Error saving session:", err);
+  }
+};
+
 const Report = () => {
   const [report, setReport] = useState(null);
   const [sid]   = useState(sessionId);
+  const hasSavedRef = useRef(false);
 
   useEffect(() => {
     fetch("http://localhost:5000/cpr-log")
@@ -142,6 +158,25 @@ const Report = () => {
       overall: overall.toFixed(1),
       feedback,
     });
+    const sessionData = {
+  timestamp: Date.now(),
+
+  overall: overall,
+  avgCPM: avgCPM,
+
+  cpmScore: cpmScore,
+  depthScore: depthScore,
+  elbowScore: elbowScore,
+  handsScore: handsScore,
+
+  minDepth: minDepth,
+  maxDepth: maxDepth
+};
+
+if (!hasSavedRef.current) {
+  saveSession(sessionData);
+  hasSavedRef.current = true;
+}
   };
 
   /* ── nav ── */

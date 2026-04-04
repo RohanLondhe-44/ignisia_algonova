@@ -1,21 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./Feed.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Feed = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // ⏱️ duration from dashboard (in seconds)
+  const duration = location.state?.duration;
+
   const [streaming, setStreaming] = useState(false);
   const [metrics, setMetrics] = useState(null);
-  const lastSpokenRef = useRef("");
-  const videoRef = useRef(null); // 👈 ref to the img tag
+  const [timeLeft, setTimeLeft] = useState(duration || 0);
 
+  const lastSpokenRef = useRef("");
+
+  // 🎤 TEXT TO SPEECH
   const speak = (text) => {
     if (!text) return;
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
+
     speechSynthesis.cancel();
     speechSynthesis.speak(utterance);
   };
@@ -29,6 +38,7 @@ const Feed = () => {
     }
   }, [metrics]);
 
+  // ▶️ START CAMERA
   const startCamera = async () => {
     try {
       setStreaming(true);
@@ -48,39 +58,59 @@ const Feed = () => {
     }
   };
 
-  const killStream = () => {
-    // 👇 Force browser to drop the MJPEG connection immediately
-    if (videoRef.current) {
-      videoRef.current.src = "";
-    }
-
-    // Stop polling
-    if (window._metricsInterval) {
-      clearInterval(window._metricsInterval);
-      window._metricsInterval = null;
-    }
-
-    // Stop speech
-    speechSynthesis.cancel();
-
-    // Update state
-    setStreaming(false);
-    setMetrics(null);
-  };
-
+  // ⛔ STOP CAMERA
   const stopCamera = async () => {
-    killStream();
     try {
       await axios.get("http://localhost:5000/stop");
+
+      setStreaming(false);
+      setMetrics(null);
+
+      speechSynthesis.cancel();
+
+      if (window._metricsInterval) {
+        clearInterval(window._metricsInterval);
+      }
+
+      // 🔥 break video stream
+      const img = document.querySelector(".webcam");
+      if (img) img.src = "";
+
     } catch (err) {
       console.error("Error stopping camera:", err);
     }
   };
 
+  // ⏳ AUTO STOP TIMER
+  useEffect(() => {
+    if (!streaming || !duration) return;
+
+    setTimeLeft(duration);
+
+    const timer = setTimeout(async () => {
+      await stopCamera();
+      navigate("/report");
+    }, duration * 1000);
+
+    const countdown = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(countdown);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(countdown);
+    };
+  }, [streaming, duration]);
+
+  // 🔘 MANUAL STOP
   const handleStopAndNavigate = async () => {
-    killStream();
-    axios.get("http://localhost:5000/stop").catch(() => {});
-    await new Promise((r) => setTimeout(r, 150));
+    await stopCamera();
     navigate("/report");
   };
 
@@ -88,12 +118,18 @@ const Feed = () => {
     <div className="camera-container">
       <h1 className="title">Real-Time Skill Coach</h1>
 
+      {/* ⏱️ TIMER DISPLAY */}
+      {streaming && duration && (
+        <div style={{ marginBottom: "10px", fontSize: "18px" }}>
+          Time Left: {timeLeft}s
+        </div>
+      )}
+
       <div className="feed-layout">
-        {/* CAMERA VIEW */}
+        {/* CAMERA */}
         <div className="camera-card">
           {streaming ? (
             <img
-              ref={videoRef} // 👈 attach ref
               src="http://localhost:5000/video"
               alt="Live Feed"
               className="webcam"
@@ -105,7 +141,7 @@ const Feed = () => {
           )}
         </div>
 
-        {/* METRICS PANEL */}
+        {/* METRICS */}
         {streaming && metrics && (
           <div className="metrics-panel">
             <div className="metrics-title">Live Metrics</div>
@@ -150,6 +186,7 @@ const Feed = () => {
               </span>
             </div>
 
+            {/* AI */}
             <div className="metric feedback-box">
               <span className="metric-label">AI Coach</span>
               <span className="metric-value feedback-text">

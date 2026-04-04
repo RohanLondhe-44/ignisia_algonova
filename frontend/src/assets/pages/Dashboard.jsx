@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import {
   HeartPulse,
   Scissors,
@@ -49,6 +49,15 @@ export const Dashboard = () => {
   const [customMin, setCustomMin] = useState('');
   const [useCustom, setUseCustom] = useState(false);
   const [launched, setLaunched] = useState(false);
+  
+  useEffect(() => {
+  fetch("http://localhost:5000/sessions")
+    .then(res => res.json())
+    .then(data => {
+      setSessions(data.reverse()); // latest first
+    })
+    .catch(err => console.error("Error fetching sessions:", err));
+}, []);
 
   const effectiveMinutes = useCustom && customMin ? parseInt(customMin) : minutes;
 
@@ -57,12 +66,20 @@ export const Dashboard = () => {
     setLaunched(true);
     setTimeout(() => setLaunched(false), 2000);
   };
-
+const [sessions, setSessions] = useState([]);
   const selectedProc = PROCEDURES.find(p => p.id === selected);
   
   const navigate = useNavigate()
 
-  const navtofeed = () => navigate("/feed");
+  const navtofeed = () => {
+  if (!selected) return;
+
+  navigate("/feed", {
+    state: {
+      duration: effectiveMinutes * 60 // convert minutes → seconds
+    }
+  });
+};
 
   return (
     <div className="dash-root">
@@ -208,26 +225,85 @@ export const Dashboard = () => {
           </div>
         </section>
 
-        {/* ══ HISTORY (empty state) ══ */}
-        <section className="dash-section dash-section-history" style={{ animationDelay: '0.2s' }}>
-          <div className="dash-section-head">
-            <span className="dash-step-num dash-step-purple">
-              <History size={16} strokeWidth={2} />
-            </span>
-            <div>
-              <h2 className="dash-section-title">Session History</h2>
-              <p className="dash-section-sub">Your previous practice reports will appear here</p>
-            </div>
-          </div>
+       <section className="dash-section dash-section-history" style={{ animationDelay: '0.2s' }}>
+  <div className="dash-section-head">
+    <span className="dash-step-num dash-step-purple">
+      <History size={16} strokeWidth={2} />
+    </span>
+    <div>
+      <h2 className="dash-section-title">Session History</h2>
+      <p className="dash-section-sub">Your previous performance timeline</p>
+    </div>
+  </div>
 
-          <div className="history-empty">
-            <div className="history-empty-icon">
-              <Circle size={40} strokeWidth={1} />
+  {sessions.length === 0 ? (
+    <div className="history-empty">
+      <div className="history-empty-icon">
+        <Circle size={40} strokeWidth={1} />
+      </div>
+      <p className="history-empty-title">No sessions yet</p>
+      <p className="history-empty-sub">Complete your first session above.</p>
+    </div>
+  ) : (
+    <div className="history-timeline">
+      {sessions.map((s, i) => {
+        const date = new Date(s.timestamp);
+
+        return (
+          <div key={i} className="history-item">
+
+            {/* LEFT LINE + DOT */}
+            <div className="history-line">
+              <div className="history-dot" />
+              {i !== sessions.length - 1 && <div className="history-connector" />}
             </div>
-            <p className="history-empty-title">No sessions yet</p>
-            <p className="history-empty-sub">Complete your first session above to see your report here.</p>
+
+            {/* CARD */}
+            <div className="history-card-pro">
+              
+              <div className="history-card-top">
+                <div>
+                  <p className="history-date">
+                    {date.toLocaleDateString()} · {date.toLocaleTimeString()}
+                  </p>
+                  <p className="history-score">
+                    {s.overall.toFixed(1)}<span>/100</span>
+                  </p>
+                </div>
+
+                <div className="history-badge">
+                  {s.overall >= 90 ? "EXCELLENT" :
+                   s.overall >= 70 ? "GOOD" :
+                   s.overall >= 50 ? "WORK" : "LOW"}
+                </div>
+              </div>
+
+              <div className="history-metrics-row">
+                <div>
+                  <span>CPM</span>
+                  <strong>{s.avgCPM.toFixed(0)}</strong>
+                </div>
+                <div>
+                  <span>Depth</span>
+                  <strong>{s.depthScore.toFixed(0)}%</strong>
+                </div>
+                <div>
+                  <span>Hands</span>
+                  <strong>{s.handsScore.toFixed(0)}%</strong>
+                </div>
+                <div>
+                  <span>Elbow</span>
+                  <strong>{s.elbowScore.toFixed(0)}%</strong>
+                </div>
+              </div>
+
+            </div>
           </div>
-        </section>
+        );
+      })}
+    </div>
+  )}
+</section>
 
       </main>
     </div>
