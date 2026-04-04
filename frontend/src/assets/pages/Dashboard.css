@@ -488,3 +488,121 @@
   .launch-row { flex-direction: column; }
   .btn-launch { width: 100%; justify-content: center; }
 }
+
+/* ─── HISTORY TIMELINE ───────────────────────── */
+
+.history-timeline {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.history-item {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+/* vertical line system */
+.history-line {
+  position: relative;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.history-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: var(--glow-sm);
+  margin-top: 6px;
+}
+
+.history-connector {
+  position: absolute;
+  top: 20px;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  opacity: 0.3;
+}
+
+/* main card */
+.history-card-pro {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  transition: 0.25s;
+}
+
+.history-card-pro:hover {
+  border-color: rgba(0,229,255,0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-sm);
+}
+
+/* top row */
+.history-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.history-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.history-score {
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.history-score span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+/* badge */
+.history-badge {
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.25);
+  color: var(--accent);
+}
+
+/* metrics row */
+.history-metrics-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.history-metrics-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-metrics-row span {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.history-metrics-row strong {
+  font-size: 0.95rem;
+}

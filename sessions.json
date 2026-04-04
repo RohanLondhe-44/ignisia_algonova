@@ -1,0 +1,35 @@
+[
+  {
+    "timestamp": 1775263930132,
+    "overall": 8.955613577023499,
+    "avgCPM": 33.0958012066344,
+    "cpmScore": 0,
+    "depthScore": 0,
+    "elbowScore": 44.64751958224543,
+    "handsScore": 0.26109660574412535,
+    "minDepth": 0.11318102836608895,
+    "maxDepth": 0.9665079116821289
+  },
+  {
+    "timestamp": 1775263947690,
+    "overall": 20,
+    "avgCPM": 64.11328057037402,
+    "cpmScore": 0,
+    "depthScore": 50,
+    "elbowScore": 0,
+    "handsScore": 50,
+    "minDepth": 0.07150058746337884,
+    "maxDepth": 0.16937816739082334
+  },
+  {
+    "timestamp": 1775263997764,
+    "overall": 20.000000000000004,
+    "avgCPM": 43.03180616167574,
+    "cpmScore": 0,
+    "depthScore": 2,
+    "elbowScore": 96,
+    "handsScore": 2,
+    "minDepth": 0.07150058746337884,
+    "maxDepth": 0.7400113463401794
+  }
+]
