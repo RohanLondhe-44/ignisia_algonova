@@ -14,12 +14,12 @@ def generate_report_from_log(filepath="cpr_log.json"):
 
     total_time = len(data)
 
-    # ---- Averages ----
+    # Averages
     avg_depth = sum(depths) / len(depths)
     avg_rate = sum(rates) / len(rates)
     avg_recoil = sum(recoils) / len(recoils)
 
-    # ---- Accuracy scoring ----
+    #  Accuracy scoring
     def score_range(values, min_val, max_val):
         correct = [v for v in values if min_val <= v <= max_val]
         return (len(correct) / len(values)) * 100 if values else 0
@@ -28,11 +28,11 @@ def generate_report_from_log(filepath="cpr_log.json"):
     rate_score = score_range(rates, 100, 120)         # bpm
     recoil_score = score_range(recoils, 0.9, 1.1)
 
-    # ---- Consistency (std deviation) ----
+    # Consistency (std deviation)
     depth_consistency = 100 - (statistics.stdev(depths) if len(depths) > 1 else 0)
     rate_consistency = 100 - (statistics.stdev(rates) if len(rates) > 1 else 0)
 
-    # ---- Overall score ----
+    # Overall score
     overall = (depth_score + rate_score + recoil_score) / 3
 
     return {

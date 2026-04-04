@@ -7,7 +7,7 @@ const Feed = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ⏱️ duration from dashboard (in seconds)
+
   const duration = location.state?.duration;
 
   const [streaming, setStreaming] = useState(false);
@@ -16,7 +16,7 @@ const Feed = () => {
 
   const lastSpokenRef = useRef("");
 
-  // 🎤 TEXT TO SPEECH
+
   const speak = (text) => {
     if (!text) return;
 
@@ -38,7 +38,7 @@ const Feed = () => {
     }
   }, [metrics]);
 
-  // ▶️ START CAMERA
+
   const startCamera = async () => {
   try {
     
@@ -63,7 +63,7 @@ if (window._metricsInterval) {
     }
   };
 
-  // ⛔ STOP CAMERA
+
   const stopCamera = async () => {
     try {
       await axios.get("http://localhost:5000/stop");
@@ -77,7 +77,7 @@ if (window._metricsInterval) {
         clearInterval(window._metricsInterval);
       }
 
-      // 🔥 break video stream
+
       const img = document.querySelector(".webcam");
       if (img) img.src = "";
 
@@ -86,7 +86,7 @@ if (window._metricsInterval) {
     }
   };
 
-  // ⏳ AUTO STOP TIMER
+
   useEffect(() => {
     if (!streaming || !duration) return;
 
@@ -113,7 +113,7 @@ if (window._metricsInterval) {
     };
   }, [streaming, duration]);
 
-  // 🔘 MANUAL STOP
+
   const handleStopAndNavigate = async () => {
     await stopCamera();
     navigate("/report");
@@ -123,7 +123,7 @@ if (window._metricsInterval) {
     <div className="camera-container">
       <h1 className="title">Real-Time Skill Coach</h1>
 
-      {/* ⏱️ TIMER DISPLAY */}
+
       {streaming && duration && (
         <div style={{ marginBottom: "10px", fontSize: "18px" }}>
           Time Left: {timeLeft}s
@@ -146,7 +146,7 @@ if (window._metricsInterval) {
           )}
         </div>
 
-        {/* METRICS */}
+
         {streaming && metrics && (
           <div className="metrics-panel">
             <div className="metrics-title">Live Metrics</div>
@@ -191,7 +191,7 @@ if (window._metricsInterval) {
               </span>
             </div>
 
-            {/* AI */}
+
             <div className="metric feedback-box">
               
               <span className="metric-value feedback-text">
@@ -202,7 +202,7 @@ if (window._metricsInterval) {
         )}
       </div>
 
-      {/* CONTROLS */}
+
       <div className="controls">
         <button onClick={startCamera}>Start</button>
         <button onClick={handleStopAndNavigate}>Stop</button>
