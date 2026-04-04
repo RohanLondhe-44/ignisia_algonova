@@ -243,7 +243,7 @@ def generate_frames(config,is_running):
             L_vis = lms[15].visibility > 0.5
             R_vis = lms[16].visibility > 0.5
 
-            # ✅ Only count both_hands_ok if both wrists are visible
+            # Only count both_hands_ok if both wrists are visible
             if L_vis and R_vis:
                 state.both_hands_ok = True
             else:
@@ -370,7 +370,7 @@ def generate_frames(config,is_running):
         current_time = time.time()
         if current_time - last_log_time >= 1.0:
             logger.log(state)
-            logger.save()   # ✅ save every 1 sec
+            logger.save()   # save every 1 sec
             last_log_time = current_time
         global LATEST_METRICS
         LATEST_METRICS.update(generate_metrics(state))

@@ -49,14 +49,27 @@ export const Dashboard = () => {
   const [customMin, setCustomMin] = useState('');
   const [useCustom, setUseCustom] = useState(false);
   const [launched, setLaunched] = useState(false);
+  const [prediction, setPrediction] = useState(null);
   
   useEffect(() => {
+  // fetch sessions
   fetch("http://localhost:5000/sessions")
     .then(res => res.json())
     .then(data => {
-      setSessions(data.reverse()); // latest first
+      setSessions(data.reverse());
     })
     .catch(err => console.error("Error fetching sessions:", err));
+
+  
+  fetch("http://localhost:5000/prediction")
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        setPrediction(data.data);
+      }
+    })
+    .catch(err => console.error("Prediction error:", err));
+
 }, []);
 
   const effectiveMinutes = useCustom && customMin ? parseInt(customMin) : minutes;
@@ -85,7 +98,7 @@ const [sessions, setSessions] = useState([]);
     <div className="dash-root">
       <main className="dash-main">
 
-        {/* ── Header ── */}
+
         <header className="dash-header">
           <div>
             <p className="dash-header-label">PrecisionLABS</p>
@@ -93,7 +106,7 @@ const [sessions, setSessions] = useState([]);
           </div>
         </header>
 
-        {/* ══ STEP 01 — Select Procedure ══ */}
+
         <section className="dash-section" style={{ animationDelay: '0.05s' }}>
           <div className="dash-section-head">
             <span className="dash-step-num">01</span>
@@ -133,7 +146,7 @@ const [sessions, setSessions] = useState([]);
           </div>
         </section>
 
-        {/* ══ STEP 02 — Set Duration ══ */}
+
         <section
           className={`dash-section ${!selected ? 'dash-section-dim' : ''}`}
           style={{ animationDelay: '0.1s' }}
@@ -183,7 +196,7 @@ const [sessions, setSessions] = useState([]);
           </div>
         </section>
 
-        {/* ══ STEP 03 — Launch ══ */}
+
         <section
           className={`dash-section ${!selected ? 'dash-section-dim' : ''}`}
           style={{ animationDelay: '0.15s' }}
@@ -252,7 +265,7 @@ const [sessions, setSessions] = useState([]);
         return (
           <div key={i} className="history-item">
 
-            {/* LEFT LINE + DOT */}
+
             <div className="history-line">
               <div className="history-dot" />
               {i !== sessions.length - 1 && <div className="history-connector" />}
@@ -303,6 +316,55 @@ const [sessions, setSessions] = useState([]);
       })}
     </div>
   )}
+
+  <br/>
+<section className="dash-section dash-section-prediction" style={{ animationDelay: '0.18s' }}>
+  <div className="dash-section-head">
+    <span className="dash-step-num dash-step-purple">04</span>
+    <div>
+      <h2 className="dash-section-title">Skill Retention</h2>
+      <p className="dash-section-sub">AI-based decay prediction</p>
+    </div>
+  </div>
+
+  {!prediction ? (
+    <div className="history-empty">
+      <p className="history-empty-title">Not enough data</p>
+      <p className="history-empty-sub">Complete at least 2 sessions.</p>
+    </div>
+  ) : (
+    <div className="prediction-card">
+      
+      <div className="prediction-main">
+        <div>
+          <p className="prediction-label">Current Skill</p>
+          <h2 className="prediction-value">
+            {(prediction.current_skill * 100).toFixed(0)}%
+          </h2>
+        </div>
+
+        <div>
+          <p className="prediction-label">Decay Time</p>
+          <h2 className="prediction-value">
+            {prediction.decay_days} days
+          </h2>
+        </div>
+      </div>
+
+      <div className="prediction-bar-track">
+        <div
+          className="prediction-bar-fill"
+          style={{ width: `${prediction.current_skill * 100}%` }}
+        />
+      </div>
+
+      <div className="prediction-reco">
+        {prediction.recommendation}
+      </div>
+
+    </div>
+  )}
+</section>
 </section>
 
       </main>

@@ -4,7 +4,7 @@ import React from 'react'
 export const Header = () => {
   return (
     <>
-      {/* ── NAV ─────────────────────────────────────────────── */}
+
       <nav className="nav">
         <a href="#" className="nav-logo">
           <span className="nav-logo-dot" />

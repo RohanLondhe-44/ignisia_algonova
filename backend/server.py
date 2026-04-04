@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from trackers.cpr_tracker import generate_frames, DEFAULT_CONFIG
 import trackers.cpr_tracker as tracker
+from learning_decay import get_prediction
 
 import os
 from dotenv import load_dotenv
@@ -18,11 +19,11 @@ CORS(app)
 #  GLOBAL CONTROL FLAG
 RUNNING = False
 
-# -------------------- GROQ SETUP --------------------
+
 load_dotenv()
 client = Groq(api_key=os.getenv("API_KEY"))
 
-# -------------------- AI FEEDBACK LOOP --------------------
+
 def groq_feedback_loop():
     global RUNNING
 
@@ -85,14 +86,13 @@ Sentences should be shorter like just an order of what clearly to do yet easy to
             print("Groq Error:", e)
             time.sleep(5)
 
-# -------------------- ROUTES --------------------
 
 @app.route('/')
 def home():
     return "Server Running"
 
 
-# ▶️ START SESSION
+# ▶ START SESSION
 @app.route("/start", methods=["POST"])
 def start():
     global RUNNING
@@ -168,8 +168,30 @@ def get_sessions():
         return jsonify(data)
     return jsonify([])
 
+@app.route("/prediction")
+def prediction():
+    try:
+        result = get_prediction()
 
-# -------------------- MAIN --------------------
+        if result is None:
+            return jsonify({
+                "status": "insufficient_data",
+                "message": "Not enough sessions to predict"
+            })
+
+        return jsonify({
+            "status": "success",
+            "data": result
+        })
+
+    except Exception as e:
+        print("Prediction Error:", e)
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+# MAIN
 if __name__ == "__main__":
     threading.Thread(target=groq_feedback_loop, daemon=True).start()
     app.run(debug=True, threaded=True)

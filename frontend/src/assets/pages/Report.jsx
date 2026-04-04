@@ -3,7 +3,7 @@ import "./report.css";
 import { useRef } from "react";
 import "./Home.css";
 
-/* ── helpers ── */
+
 const sessionId = () =>
   "SES-" + Math.random().toString(36).slice(2, 8).toUpperCase();
 
@@ -14,10 +14,10 @@ const gradeOf = (score) => {
   return           { label: "CRITICAL",         cls: "score-grade--fail" };
 };
 
-/* Clamp a CPM value (0–180) to a 0–100% position on the range bar */
+
 const cpmToPercent = (cpm) => Math.min(Math.max((cpm / 180) * 100, 0), 100);
 
-/* ── arc SVG for overall score ── */
+
 const ScoreArc = ({ score }) => {
   const r = 48, cx = 60, cy = 60;
   const circ = 2 * Math.PI * r;
@@ -35,7 +35,7 @@ const ScoreArc = ({ score }) => {
         strokeDashoffset={circ * 0.875}
         strokeLinecap="round"
       />
-      {/* fill */}
+
       <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="6"
         strokeDasharray={`${dash * 0.75} ${circ}`}
         strokeDashoffset={circ * 0.875}
@@ -46,7 +46,7 @@ const ScoreArc = ({ score }) => {
   );
 };
 
-/* ── metric card ── */
+
 const MetricCard = ({ mod, val, unit, label, pct }) => (
   <div className={`metric-card metric-card--${mod}`}>
     <div className="metric-val">
@@ -62,7 +62,7 @@ const MetricCard = ({ mod, val, unit, label, pct }) => (
   </div>
 );
 
-/* ── CPM range bar ── */
+
 const CPMRangeBar = ({ cpm }) => {
   const needle = cpmToPercent(cpm);
   // 100–120 CPM is "the zone": 55.5%–66.7% of 180
@@ -79,7 +79,7 @@ const CPMRangeBar = ({ cpm }) => {
   );
 };
 
-/* ══════════════════════════════════════════════════════════════ */
+
 
 const saveSession = async (data) => {
   try {
@@ -182,7 +182,7 @@ if (!hasSavedRef.current) {
 }
   };
 
-  /* ── nav ── */
+
   const Nav = () => (
     <nav className="nav">
       <a href="/" className="nav-logo">
@@ -241,7 +241,7 @@ if (!hasSavedRef.current) {
       <Nav />
       <main className="report-page">
 
-        {/* ── Header ── */}
+
         <div className="report-header">
           <div className="report-header-left">
             <div className="report-eyebrow">
@@ -264,7 +264,7 @@ if (!hasSavedRef.current) {
           </div>
         </div>
 
-        {/* ── Avg CPM banner ── */}
+
         <div className="cpm-display">
           <div>
             <div className="cpm-unit" style={{ marginBottom: 4, fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)" }}>
@@ -285,7 +285,7 @@ if (!hasSavedRef.current) {
           <CPMRangeBar cpm={parseFloat(avgCPM)} />
         </div>
 
-        {/* ── 4 Metric Cards ── */}
+
 <div className="metrics-section">
   <span className="section-eyebrow">Accuracy Breakdown</span>
   <div className="section-title">Performance Metrics</div>
@@ -321,7 +321,7 @@ if (!hasSavedRef.current) {
   </div>
 </div>
 
-        {/* ── Depth range ── */}
+
         <div className="depth-section">
           <span className="section-eyebrow">Compression Depth</span>
           <div className="section-title">Depth Range</div>
@@ -355,7 +355,7 @@ if (!hasSavedRef.current) {
           </div>
         </div>
 
-        {/* ── Feedback ── */}
+
         <div className="feedback-section">
           <span className="section-eyebrow">Coaching Insights</span>
           <div className="section-title">Feedback</div>
@@ -377,7 +377,7 @@ if (!hasSavedRef.current) {
 
         <div className="report-divider" />
 
-        {/* ── Footer ── */}
+
         <footer className="report-footer">
           <div className="report-footer-brand">
             <span>Precision</span>LABS · Procedural Training Intelligence

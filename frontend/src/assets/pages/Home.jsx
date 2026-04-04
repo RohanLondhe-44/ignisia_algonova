@@ -2,9 +2,9 @@ import React from 'react';
 import './Home.css';
 import HandImage from '../Hand.png';
 
-// ── Replace this with your actual image path ──────────────────
+
 const HERO_IMAGE = '/assets/hero.jpg';
-// ── This is the large right-side feature image ────────────────
+
 const FEATURE_IMAGE = HandImage;
 
 const features = [
@@ -65,7 +65,7 @@ const steps = [
 export const Home = () => {
   return (
     <>
-      {/* ── HERO ─────────────────────────────────────────────── */}
+
       <section className="hero">
         <div className="hero-bg">
           <img src={HERO_IMAGE} alt="Procedural skill training" />
@@ -73,10 +73,10 @@ export const Home = () => {
         <div className="hero-glow" />
         <div className="hero-glow2" />
 
-        {/* Two-column grid */}
+
         <div className="hero-inner">
 
-          {/* ── LEFT: centered text ── */}
+
           <div className="hero-text-col">
             <h1 className="hero-title">
               Precision<em>LABS</em>
@@ -94,10 +94,10 @@ export const Home = () => {
             </div>
           </div>
 
-          {/* ── RIGHT: large feature image ── */}
+
           <div className="hero-image-col">
             <div className="hero-image-wrapper">
-              {/* Decorative corner accents */}
+
               <span className="img-corner img-corner--tl" />
               <span className="img-corner img-corner--tr" />
               <span className="img-corner img-corner--bl" />
@@ -116,7 +116,7 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* ── FEATURES ─────────────────────────────────────────── */}
+
       <section className="features-section" id="features">
         <p className="section-label">Core Capabilities</p>
         <h2 className="section-title">Everything the system does.</h2>
@@ -136,7 +136,7 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ─────────────────────────────────────── */}
+
       <section className="how-section" id="how">
         <p className="section-label">Workflow</p>
         <h2 className="section-title">From camera to coaching in four steps.</h2>
