@@ -31,9 +31,9 @@ const features = [
   },
   {
     num: '04',
-    title: 'Fatigue Detection Module',
+    title: 'Report Generation',
     description:
-      'Analyses micro-tremor patterns (coordinate jitter) over extended sessions to detect hand fatigue and enforce mandatory rest breaks.',
+      'Instant performance report is generated after session completion, showing compression rate, depth accuracy, hand placement, fatigue detection, and overall score with actionable feedback.',
     tag: 'Biosignal Analysis',
   },
 ];
@@ -61,14 +61,6 @@ const steps = [
   },
 ];
 
-const disciplines = [
-  { emoji: '🩺', name: 'Nursing' },
-  { emoji: '🦷', name: 'Dentistry' },
-  { emoji: '⚡', name: 'Electrical' },
-  { emoji: '🍳', name: 'Culinary Arts' },
-  { emoji: '🔧', name: 'Mechanical' },
-  { emoji: '💉', name: 'Surgical' },
-];
 
 export const Home = () => {
   return (
@@ -154,24 +146,6 @@ export const Home = () => {
               <div className="step-num">{s.num}</div>
               <h4>{s.title}</h4>
               <p>{s.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── DISCIPLINES ──────────────────────────────────────── */}
-      <section className="disciplines-section" id="disciplines">
-        <p className="section-label">Use Cases</p>
-        <h2 className="section-title">Built for every hands-on discipline.</h2>
-        <p className="section-sub">
-          Any skill that can be encoded as a sequence of spatial checkpoints
-          can be coached by ED02.
-        </p>
-        <div className="disciplines-grid">
-          {disciplines.map((d) => (
-            <div className="discipline-pill" key={d.name}>
-              <span className="discipline-emoji">{d.emoji}</span>
-              <span className="discipline-name">{d.name}</span>
             </div>
           ))}
         </div>
