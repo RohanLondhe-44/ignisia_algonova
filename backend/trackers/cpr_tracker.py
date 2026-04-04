@@ -42,7 +42,7 @@ IDEAL_POSE = {
 #default values
 DEFAULT_CONFIG = {
     "camera_index":       0,
-    "min_depth_thresh":   0.04,
+    "min_depth_thresh":   0.001,
     "max_depth_thresh":   0.08,
     "cpm_low":            100,
     "cpm_high":           120,
@@ -176,7 +176,7 @@ class CPRState:
     cpm_ok:           Optional[bool] = None
 
 
-def generate_frames(config):
+def generate_frames(config,is_running):
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose(
         static_image_mode=False,
@@ -197,9 +197,11 @@ def generate_frames(config):
     
     SIDE_W = 300
 
-    while cap.isOpened():
+    while cap.isOpened() and is_running():
         ret, frame = cap.read()
         if not ret:
+            break
+        if not is_running():
             break
 
         frame = cv2.flip(frame, 1)
@@ -371,7 +373,7 @@ def generate_frames(config):
             logger.save()   # ✅ save every 1 sec
             last_log_time = current_time
         global LATEST_METRICS
-        LATEST_METRICS = generate_metrics(state)
+        LATEST_METRICS.update(generate_metrics(state))
     cap.release()
     pose.close()
     logger.save()

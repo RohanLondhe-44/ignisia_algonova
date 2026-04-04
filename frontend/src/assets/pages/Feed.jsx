@@ -40,9 +40,14 @@ const Feed = () => {
 
   // ▶️ START CAMERA
   const startCamera = async () => {
-    try {
-      setStreaming(true);
+  try {
+    
+    await axios.post("http://localhost:5000/start");
 
+    setStreaming(true);
+if (window._metricsInterval) {
+  clearInterval(window._metricsInterval);
+}
       const interval = setInterval(async () => {
         try {
           const res = await axios.get("http://localhost:5000/metrics");
@@ -188,7 +193,7 @@ const Feed = () => {
 
             {/* AI */}
             <div className="metric feedback-box">
-              <span className="metric-label">AI Coach</span>
+              
               <span className="metric-value feedback-text">
                 {metrics.ai_feedback || "Analyzing..."}
               </span>

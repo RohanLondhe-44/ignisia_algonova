@@ -1,155 +1,245 @@
 [
     {
-        "timestamp": 1775275558.9482088,
+        "timestamp": 1775278193.9293642,
         "cpm": 0.0,
         "cpm_ok": false,
-        "depth": 0.0,
+        "depth": 0.37248898446559897,
         "depth_ok": false,
         "elbow_ok": null,
         "both_hands_ok": null
     },
     {
-        "timestamp": 1775275559.9968004,
+        "timestamp": 1775278194.9435787,
         "cpm": 0.0,
         "cpm_ok": false,
-        "depth": 0.32875739634037027,
+        "depth": 0.37248898446559897,
         "depth_ok": false,
         "elbow_ok": null,
         "both_hands_ok": null
     },
     {
-        "timestamp": 1775275561.0192575,
-        "cpm": 0.0,
+        "timestamp": 1775278195.9556615,
+        "cpm": 29.627472485555828,
         "cpm_ok": false,
-        "depth": 0.32875739634037027,
+        "depth": 0.009033811092376665,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278197.016455,
+        "cpm": 29.627472485555828,
+        "cpm_ok": false,
+        "depth": 0.009033811092376665,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278198.0422132,
+        "cpm": 29.627472485555828,
+        "cpm_ok": false,
+        "depth": 0.009033811092376665,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278199.0890226,
+        "cpm": 25.157466689565727,
+        "cpm_ok": false,
+        "depth": 0.5717957997322081,
+        "depth_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": null
+    },
+    {
+        "timestamp": 1775278200.1019537,
+        "cpm": 33.461317333294566,
+        "cpm_ok": false,
+        "depth": 0.25446582198143,
+        "depth_ok": false,
+        "elbow_ok": false,
+        "both_hands_ok": null
+    },
+    {
+        "timestamp": 1775278201.1050303,
+        "cpm": 36.906259739775024,
+        "cpm_ok": false,
+        "depth": 0.016746619939804086,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": null
+    },
+    {
+        "timestamp": 1775278202.1263337,
+        "cpm": 36.906259739775024,
+        "cpm_ok": false,
+        "depth": 0.016746619939804086,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278203.2056832,
+        "cpm": 36.906259739775024,
+        "cpm_ok": false,
+        "depth": 0.016746619939804086,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278204.222355,
+        "cpm": 40.19818207617518,
+        "cpm_ok": false,
+        "depth": 0.016746619939804086,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278205.2964153,
+        "cpm": 40.19818207617518,
+        "cpm_ok": false,
+        "depth": 0.016746619939804086,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278206.3351502,
+        "cpm": 26.720204187419167,
+        "cpm_ok": false,
+        "depth": 0.2404968321323394,
         "depth_ok": false,
         "elbow_ok": false,
         "both_hands_ok": true
     },
     {
-        "timestamp": 1775275562.0716078,
-        "cpm": 0.0,
+        "timestamp": 1775278207.3802207,
+        "cpm": 28.66265909411822,
         "cpm_ok": false,
-        "depth": 0.32875739634037027,
+        "depth": 0.6056523537635805,
+        "depth_ok": false,
+        "elbow_ok": true,
+        "both_hands_ok": null
+    },
+    {
+        "timestamp": 1775278208.3817291,
+        "cpm": 28.66265909411822,
+        "cpm_ok": false,
+        "depth": 0.6056523537635805,
+        "depth_ok": false,
+        "elbow_ok": true,
+        "both_hands_ok": null
+    },
+    {
+        "timestamp": 1775278209.4439633,
+        "cpm": 22.239850651603785,
+        "cpm_ok": false,
+        "depth": 0.003612130880355835,
+        "depth_ok": true,
+        "elbow_ok": true,
+        "both_hands_ok": null
+    },
+    {
+        "timestamp": 1775278210.4557064,
+        "cpm": 47.820232217439354,
+        "cpm_ok": false,
+        "depth": 0.044859769940376326,
+        "depth_ok": true,
+        "elbow_ok": true,
+        "both_hands_ok": null
+    },
+    {
+        "timestamp": 1775278211.460019,
+        "cpm": 47.820232217439354,
+        "cpm_ok": false,
+        "depth": 0.044859769940376326,
+        "depth_ok": true,
+        "elbow_ok": true,
+        "both_hands_ok": null
+    },
+    {
+        "timestamp": 1775278212.4654946,
+        "cpm": 46.71577766906353,
+        "cpm_ok": false,
+        "depth": 0.024832576513290405,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278213.5167816,
+        "cpm": 51.97260274538412,
+        "cpm_ok": false,
+        "depth": 0.003694528341293357,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278214.5630045,
+        "cpm": 51.97260274538412,
+        "cpm_ok": false,
+        "depth": 0.003694528341293357,
+        "depth_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278215.5885398,
+        "cpm": 58.8039575531812,
+        "cpm_ok": false,
+        "depth": 0.09601597785949711,
         "depth_ok": false,
         "elbow_ok": false,
         "both_hands_ok": true
     },
     {
-        "timestamp": 1775275563.1140893,
-        "cpm": 19.745441612173305,
+        "timestamp": 1775278216.6127632,
+        "cpm": 58.8039575531812,
         "cpm_ok": false,
-        "depth": 0.4568988025188446,
+        "depth": 0.09601597785949711,
         "depth_ok": false,
         "elbow_ok": false,
         "both_hands_ok": true
     },
     {
-        "timestamp": 1775275564.1143615,
-        "cpm": 35.15883021118288,
+        "timestamp": 1775278217.6454983,
+        "cpm": 62.5988004720617,
         "cpm_ok": false,
-        "depth": 0.08182641267776491,
+        "depth": 0.09601597785949711,
         "depth_ok": false,
         "elbow_ok": false,
         "both_hands_ok": true
     },
     {
-        "timestamp": 1775275565.1623092,
-        "cpm": 36.518209290204936,
+        "timestamp": 1775278218.706295,
+        "cpm": 48.513101137725855,
         "cpm_ok": false,
-        "depth": 0.9450299531221389,
+        "depth": 0.2823712050914764,
         "depth_ok": false,
-        "elbow_ok": true,
+        "elbow_ok": false,
+        "both_hands_ok": true
+    },
+    {
+        "timestamp": 1775278219.735449,
+        "cpm": 53.98240229161898,
+        "cpm_ok": false,
+        "depth": 0.09076631307601923,
+        "depth_ok": false,
+        "elbow_ok": false,
         "both_hands_ok": null
     },
     {
-        "timestamp": 1775275566.1979272,
-        "cpm": 36.518209290204936,
+        "timestamp": 1775278220.7633245,
+        "cpm": 55.59705769414252,
         "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275567.1999097,
-        "cpm": 36.518209290204936,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275568.2377472,
-        "cpm": 36.518209290204936,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275569.2754853,
-        "cpm": 36.518209290204936,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275570.3202949,
-        "cpm": 63.479575834609896,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275571.3343768,
-        "cpm": 63.479575834609896,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275572.400527,
-        "cpm": 63.479575834609896,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275573.4087005,
-        "cpm": 39.57875056342631,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275574.434249,
-        "cpm": 39.57875056342631,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
-        "both_hands_ok": null
-    },
-    {
-        "timestamp": 1775275575.448896,
-        "cpm": 39.57875056342631,
-        "cpm_ok": false,
-        "depth": 0.9450299531221389,
-        "depth_ok": false,
-        "elbow_ok": true,
+        "depth": 0.06491608321666731,
+        "depth_ok": true,
+        "elbow_ok": false,
         "both_hands_ok": null
     }
 ]
